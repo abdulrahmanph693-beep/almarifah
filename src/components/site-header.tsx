@@ -65,7 +65,7 @@ export function SiteHeader() {
               <li key={item.to}>
                 <Link
                   to={item.to}
-                  activeOptions={{ exact: "exact" in item ? item.exact : false }}
+                  activeOptions={{ exact: item.to === "/" }}
                   activeProps={{ className: "text-accent" }}
                   inactiveProps={{ className: "text-muted-foreground" }}
                   className="link-underline transition-colors hover:text-foreground"
