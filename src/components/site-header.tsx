@@ -35,6 +35,22 @@ export function SiteHeader() {
             <div className="hidden sm:block">
               <SiteSearch />
             </div>
+            {session ? (
+              <Link
+                to={isAdmin ? "/admin" : "/dashboard"}
+                className="inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1 text-xs font-medium transition-colors hover:border-accent hover:text-accent"
+              >
+                <UserRound className="h-3.5 w-3.5" aria-hidden />
+                {isAdmin ? "Editor desk" : "My profile"}
+              </Link>
+            ) : (
+              <Link
+                to="/auth"
+                className="inline-flex items-center gap-1.5 rounded-md bg-accent px-2.5 py-1 text-xs font-medium text-accent-foreground transition-opacity hover:opacity-90"
+              >
+                Sign in
+              </Link>
+            )}
             <ThemeToggle />
           </div>
         </div>
