@@ -29,7 +29,7 @@ export const Route = createFileRoute("/_authenticated/admin")({
       { property: "og:description", content: "Editorial review and publishing controls." },
     ],
   }),
-  component: AdminDesk;
+  component: AdminDesk,
 });
 
 function AdminDesk() {
