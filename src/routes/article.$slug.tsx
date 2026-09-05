@@ -75,7 +75,8 @@ function useReadingProgress() {
 }
 
 function ShareBar({ title }: { title: string }) {
-  const url = typeof window !== "undefined" ? window.location.href : "";
+  const [url, setUrl] = useState("");
+  useEffect(() => setUrl(window.location.href), []);
   const items = [
     { icon: Twitter, label: "Share on X", href: `https://x.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}` },
     { icon: Facebook, label: "Share on Facebook", href: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}` },
