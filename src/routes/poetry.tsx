@@ -44,7 +44,7 @@ function PoetryPage() {
               {authorBySlug(poem.authorSlug).name} · {formatDate(poem.date)}
             </p>
             <p className="poem mx-auto mt-10 max-w-xl text-foreground">
-              {poem.poem?.split("*")[0].trim()}
+              {poem.poem?.split("*")[0]?.trim()}
             </p>
             <Link
               to="/article/$slug"

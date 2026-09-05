@@ -87,7 +87,7 @@ export const authors: Author[] = [
 ];
 
 export function authorBySlug(slug: string): Author {
-  return authors.find((a) => a.slug === slug) ?? authors[0];
+  return authors.find((a) => a.slug === slug) ?? authors[0]!;
 }
 
 const lorem = (topic: string) => [

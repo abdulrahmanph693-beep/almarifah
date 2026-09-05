@@ -35,7 +35,8 @@ export const Route = createFileRoute("/")({
 
 function Home() {
   const featured = posts.filter((p) => p.featured);
-  const [lead, ...rest] = featured;
+  const lead = featured[0]!;
+  const rest = featured.slice(1);
   const recent = sortedPosts.slice(0, 6);
   const essays = postsBySection("essays").slice(0, 2);
   const poems = postsBySection("poetry");
@@ -181,7 +182,7 @@ function Home() {
             {poems.map((poem) => (
               <article key={poem.slug}>
                 <p className="poem mx-auto max-w-xl text-foreground">
-                  {poem.poem?.split("*")[0].trim()}
+                  {poem.poem?.split("*")[0]?.trim()}
                 </p>
                 <h3 className="mt-8 font-serif text-xl">
                   <Link
