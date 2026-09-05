@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as ArticlesRouteImport } from './routes/articles'
+import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as GenresRouteImport } from './routes/genres'
 import { Route as PoetryRouteImport } from './routes/poetry'
@@ -30,6 +31,11 @@ const AboutRoute = AboutRouteImport.update({
 const ArticlesRoute = ArticlesRouteImport.update({
   id: '/articles',
   path: '/articles',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ContactRoute = ContactRouteImport.update({
@@ -57,6 +63,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/articles': typeof ArticlesRoute
+  '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/genres': typeof GenresRoute
   '/poetry': typeof PoetryRoute
@@ -66,6 +73,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/articles': typeof ArticlesRoute
+  '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/genres': typeof GenresRoute
   '/poetry': typeof PoetryRoute
@@ -76,6 +84,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/articles': typeof ArticlesRoute
+  '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/genres': typeof GenresRoute
   '/poetry': typeof PoetryRoute
@@ -87,6 +96,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/articles'
+    | '/auth'
     | '/contact'
     | '/genres'
     | '/poetry'
@@ -96,6 +106,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/articles'
+    | '/auth'
     | '/contact'
     | '/genres'
     | '/poetry'
@@ -105,6 +116,7 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/articles'
+    | '/auth'
     | '/contact'
     | '/genres'
     | '/poetry'
@@ -115,6 +127,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   ArticlesRoute: typeof ArticlesRoute
+  AuthRoute: typeof AuthRoute
   ContactRoute: typeof ContactRoute
   GenresRoute: typeof GenresRoute
   PoetryRoute: typeof PoetryRoute
@@ -142,6 +155,13 @@ declare module '@tanstack/react-router' {
       path: '/articles'
       fullPath: '/articles'
       preLoaderRoute: typeof ArticlesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/contact': {
@@ -179,6 +199,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   ArticlesRoute: ArticlesRoute,
+  AuthRoute: AuthRoute,
   ContactRoute: ContactRoute,
   GenresRoute: GenresRoute,
   PoetryRoute: PoetryRoute,
