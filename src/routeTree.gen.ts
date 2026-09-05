@@ -10,17 +10,23 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as ArticlesRouteImport } from './routes/articles'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as GenresRouteImport } from './routes/genres'
 import { Route as PoetryRouteImport } from './routes/poetry'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as ArticleSlugRouteImport } from './routes/article.$slug'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -53,6 +59,11 @@ const PoetryRoute = PoetryRouteImport.update({
   path: '/poetry',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const ArticleSlugRoute = ArticleSlugRouteImport.update({
   id: '/article/$slug',
   path: '/article/$slug',
@@ -67,6 +78,7 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/genres': typeof GenresRoute
   '/poetry': typeof PoetryRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
   '/article/$slug': typeof ArticleSlugRoute
 }
 export interface FileRoutesByTo {
@@ -77,17 +89,20 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/genres': typeof GenresRoute
   '/poetry': typeof PoetryRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
   '/article/$slug': typeof ArticleSlugRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/articles': typeof ArticlesRoute
   '/auth': typeof AuthRoute
   '/contact': typeof ContactRoute
   '/genres': typeof GenresRoute
   '/poetry': typeof PoetryRoute
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/article/$slug': typeof ArticleSlugRoute
 }
 export interface FileRouteTypes {
@@ -100,6 +115,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/genres'
     | '/poetry'
+    | '/dashboard'
     | '/article/$slug'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -110,21 +126,25 @@ export interface FileRouteTypes {
     | '/contact'
     | '/genres'
     | '/poetry'
+    | '/dashboard'
     | '/article/$slug'
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
     | '/about'
     | '/articles'
     | '/auth'
     | '/contact'
     | '/genres'
     | '/poetry'
+    | '/_authenticated/dashboard'
     | '/article/$slug'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
   ArticlesRoute: typeof ArticlesRoute
   AuthRoute: typeof AuthRoute
@@ -141,6 +161,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -185,6 +212,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PoetryRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/article/$slug': {
       id: '/article/$slug'
       path: '/article/$slug'
@@ -195,8 +229,20 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AboutRoute: AboutRoute,
   ArticlesRoute: ArticlesRoute,
   AuthRoute: AuthRoute,
