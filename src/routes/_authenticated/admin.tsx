@@ -74,9 +74,12 @@ function AdminDesk() {
   const byStatus = (s: SubmissionStatus) => works.filter((w) => w.status === s);
 
   async function setStatus(work: Submission, status: SubmissionStatus) {
-    const patch: Record<string, unknown> = { status, review_note: note };
-    if (status === "published") patch['published_at'] = new Date().toISOString();
-    if (edit && openId === work.id) Object.assign(patch, edit);
+    const patch = {
+      status,
+      review_note: note,
+      ...(status === "published" ? { published_at: new Date().toISOString() } : {}),
+      ...(edit && openId === work.id ? edit : {}),
+    };
     const { error } = await supabase.from("submissions").update(patch).eq("id", work.id);
     if (error) {
       toast.error("Could not update this work.");
