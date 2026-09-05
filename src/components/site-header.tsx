@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Globe, Menu, X } from "lucide-react";
+import { Globe, Menu, X, UserRound } from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { SiteSearch } from "@/components/site-search";
+import { useAuth } from "@/hooks/use-auth";
 
 const nav = [
   { to: "/", label: "Home", exact: true },
@@ -15,6 +16,8 @@ const nav = [
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const { session, isAdmin } = useAuth();
+
 
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/90 backdrop-blur">
@@ -32,6 +35,22 @@ export function SiteHeader() {
             <div className="hidden sm:block">
               <SiteSearch />
             </div>
+            {session ? (
+              <Link
+                to={isAdmin ? "/admin" : "/dashboard"}
+                className="inline-flex items-center gap-1.5 rounded-md border border-border px-2.5 py-1 text-xs font-medium transition-colors hover:border-accent hover:text-accent"
+              >
+                <UserRound className="h-3.5 w-3.5" aria-hidden />
+                {isAdmin ? "Editor desk" : "My profile"}
+              </Link>
+            ) : (
+              <Link
+                to="/auth"
+                className="inline-flex items-center gap-1.5 rounded-md bg-accent px-2.5 py-1 text-xs font-medium text-accent-foreground transition-opacity hover:opacity-90"
+              >
+                Sign in
+              </Link>
+            )}
             <ThemeToggle />
           </div>
         </div>
@@ -96,6 +115,15 @@ export function SiteHeader() {
                 </Link>
               </li>
             ))}
+            <li>
+              <Link
+                to={session ? (isAdmin ? "/admin" : "/dashboard") : "/auth"}
+                onClick={() => setOpen(false)}
+                className="block px-4 py-2.5 text-sm font-medium text-accent"
+              >
+                {session ? (isAdmin ? "Editor desk" : "My profile") : "Sign in / Create account"}
+              </Link>
+            </li>
           </ul>
         </nav>
       )}
