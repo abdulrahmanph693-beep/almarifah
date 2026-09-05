@@ -115,6 +115,15 @@ export function SiteHeader() {
                 </Link>
               </li>
             ))}
+            <li>
+              <Link
+                to={session ? (isAdmin ? "/admin" : "/dashboard") : "/auth"}
+                onClick={() => setOpen(false)}
+                className="block px-4 py-2.5 text-sm font-medium text-accent"
+              >
+                {session ? (isAdmin ? "Editor desk" : "My profile") : "Sign in / Create account"}
+              </Link>
+            </li>
           </ul>
         </nav>
       )}
