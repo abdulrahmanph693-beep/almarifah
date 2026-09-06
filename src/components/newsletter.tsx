@@ -12,7 +12,7 @@ export function Newsletter() {
     >
       <Mail className="h-5 w-5 text-accent" aria-hidden />
       <h2 id="newsletter-heading" className="mt-3 font-serif text-xl leading-snug">
-        Subscribe to Alma'rifa Insights
+        Subscribe to Almarifah Insights
       </h2>
       <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
         One considered letter each week: a new essay, a poem worth rereading, and notes from the
@@ -24,7 +24,7 @@ export function Newsletter() {
           e.preventDefault();
           if (!email.trim()) return;
           toast.success("You're subscribed", {
-            description: "Look out for the next Alma'rifa letter.",
+            description: "Look out for the next Almarifah letter.",
           });
           setEmail("");
         }}

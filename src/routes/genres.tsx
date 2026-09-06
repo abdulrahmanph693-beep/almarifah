@@ -6,13 +6,13 @@ import { postsBySection, sections, type Section } from "@/lib/content";
 export const Route = createFileRoute("/genres")({
   head: () => ({
     meta: [
-      { title: "Literary Genres — Alma'rifa" },
+      { title: "Literary Genres — Almarifah" },
       {
         name: "description",
         content:
-          "Short stories, reviews and perspectives: fiction and criticism from the Alma'rifa contributors.",
+          "Short stories, reviews and perspectives: fiction and criticism from the Almarifah contributors.",
       },
-      { property: "og:title", content: "Literary Genres — Alma'rifa" },
+      { property: "og:title", content: "Literary Genres — Almarifah" },
       { property: "og:description", content: "Short stories, reviews and perspectives." },
       { property: "og:url", content: "/genres" },
     ],

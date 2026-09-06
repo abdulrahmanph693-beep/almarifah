@@ -6,7 +6,7 @@ export function SiteFooter() {
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-4">
         <div className="md:col-span-2">
           <span className="font-serif text-2xl">
-            Alma<span className="text-accent">'</span>rifa
+            Almarifah
           </span>
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground">
             The English edition of Ainul-Haqq. A quiet place for essays, poetry, criticism and the
@@ -58,7 +58,7 @@ export function SiteFooter() {
       </div>
       <div className="border-t border-border">
         <p className="mx-auto max-w-7xl px-4 py-5 text-xs text-muted-foreground sm:px-6">
-          © {new Date().getFullYear()} Alma'rifa. All rights reserved.
+          © {new Date().getFullYear()} Almarifah. All rights reserved.
         </p>
       </div>
     </footer>

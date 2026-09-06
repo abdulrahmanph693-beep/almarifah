@@ -80,13 +80,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Alma'rifa — Thought, Literature, and Knowledge" },
+      { title: "Almarifah — Thought, Literature, and Knowledge" },
       {
         name: "description",
         content:
           "The English edition of Ainul-Haqq: essays, poetry, short stories, reviews and perspectives for slow, serious reading.",
       },
-      { property: "og:site_name", content: "Alma'rifa" },
+      { property: "og:site_name", content: "Almarifah" },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
     ],
@@ -109,7 +109,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         children: JSON.stringify({
           "@context": "https://schema.org",
           "@type": "Periodical",
-          name: "Alma'rifa",
+          name: "Almarifah",
           alternateName: "Ainul-Haqq English",
           inLanguage: "en",
           description:

@@ -4,16 +4,16 @@ import { authors } from "@/lib/content";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About Us — Alma'rifa" },
+      { title: "About Us — Almarifah" },
       {
         name: "description",
         content:
-          "Alma'rifa is the English edition of Ainul-Haqq: an editorial home for essays, poetry and criticism written for unhurried readers.",
+          "Almarifah is the English edition of Ainul-Haqq: an editorial home for essays, poetry and criticism written for unhurried readers.",
       },
-      { property: "og:title", content: "About Us — Alma'rifa" },
+      { property: "og:title", content: "About Us — Almarifah" },
       {
         property: "og:description",
-        content: "The editorial mission behind Alma'rifa, the English edition of Ainul-Haqq.",
+        content: "The editorial mission behind Almarifah, the English edition of Ainul-Haqq.",
       },
       { property: "og:url", content: "/about" },
     ],
@@ -27,12 +27,12 @@ function AboutPage() {
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6">
       <span className="eyebrow">About</span>
       <h1 className="mt-3 font-serif text-4xl sm:text-5xl">
-        Alma<span className="text-accent">'</span>rifa — The Knowledge
+        Almarifah — The Knowledge
       </h1>
 
       <div className="prose-reading mt-10">
         <p className="dropcap">
-          Alma'rifa is the English edition of Ainul-Haqq. It exists for a kind of reading that is
+          Almarifah is the English edition of Ainul-Haqq. It exists for a kind of reading that is
           becoming rare: unhurried, argumentative, willing to sit with a paragraph until it gives
           something up.
         </p>
@@ -54,7 +54,7 @@ function AboutPage() {
         </ul>
         <h2>Our relationship to Ainul-Haqq</h2>
         <p>
-          Ainul-Haqq is our Arabic parent publication. Alma'rifa is not a mirror of it: some pieces
+          Ainul-Haqq is our Arabic parent publication. Almarifah is not a mirror of it: some pieces
           are translated in both directions, others are written for this edition alone. The two share
           an editorial conscience rather than a table of contents.
         </p>

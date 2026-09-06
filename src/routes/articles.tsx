@@ -5,13 +5,13 @@ import { sortedPosts } from "@/lib/content";
 export const Route = createFileRoute("/articles")({
   head: () => ({
     meta: [
-      { title: "Articles & Essays — Alma'rifa" },
+      { title: "Articles & Essays — Almarifah" },
       {
         name: "description",
         content:
           "Long-form essays and analysis on philosophy, history, literature and culture, filtered by category and tag.",
       },
-      { property: "og:title", content: "Articles & Essays — Alma'rifa" },
+      { property: "og:title", content: "Articles & Essays — Almarifah" },
       {
         property: "og:description",
         content: "Long-form essays and analysis on philosophy, history, literature and culture.",

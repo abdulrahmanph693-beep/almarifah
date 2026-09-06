@@ -4,13 +4,13 @@ import { authorBySlug, formatDate, postsBySection } from "@/lib/content";
 export const Route = createFileRoute("/poetry")({
   head: () => ({
     meta: [
-      { title: "Poetry — Alma'rifa" },
+      { title: "Poetry — Almarifah" },
       {
         name: "description",
         content:
-          "Verse, translation and the music of language: the Alma'rifa Poetry Corner, formatted to preserve every line break and stanza.",
+          "Verse, translation and the music of language: the Almarifah Poetry Corner, formatted to preserve every line break and stanza.",
       },
-      { property: "og:title", content: "Poetry — Alma'rifa" },
+      { property: "og:title", content: "Poetry — Almarifah" },
       { property: "og:description", content: "Verse, translation and the music of language." },
       { property: "og:url", content: "/poetry" },
     ],
