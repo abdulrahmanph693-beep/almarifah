@@ -27,7 +27,7 @@ function AboutPage() {
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6">
       <span className="eyebrow">About</span>
       <h1 className="mt-3 font-serif text-4xl sm:text-5xl">
-        Alma<span className="text-accent">'</span>rifa — The Knowledge
+        Almarifah — The Knowledge
       </h1>
 
       <div className="prose-reading mt-10">

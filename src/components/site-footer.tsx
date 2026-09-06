@@ -6,7 +6,7 @@ export function SiteFooter() {
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-4">
         <div className="md:col-span-2">
           <span className="font-serif text-2xl">
-            Alma<span className="text-accent">'</span>rifa
+            Almarifah
           </span>
           <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground">
             The English edition of Ainul-Haqq. A quiet place for essays, poetry, criticism and the

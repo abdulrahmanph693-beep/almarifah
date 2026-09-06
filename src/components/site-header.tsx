@@ -60,7 +60,7 @@ export function SiteHeader() {
         <div className="flex items-center justify-between gap-4 py-5">
           <Link to="/" className="group">
             <span className="block font-serif text-3xl leading-none tracking-tight sm:text-4xl">
-              Alma<span className="text-accent">'</span>rifa
+              Almarifah
             </span>
             <span className="mt-1.5 block text-[0.7rem] uppercase tracking-[0.22em] text-muted-foreground">
               A Hub for Thought, Literature, and Knowledge
