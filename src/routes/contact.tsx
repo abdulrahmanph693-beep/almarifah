@@ -7,14 +7,14 @@ import { sections } from "@/lib/content";
 export const Route = createFileRoute("/contact")({
   head: () => ({
     meta: [
-      { title: "Contact & Submissions — Alma'rifa" },
+      { title: "Contact & Submissions — Almarifah" },
       {
         name: "description",
         content:
-          "Pitch an essay, submit poetry or fiction, or write to the Alma'rifa editors. Submission guidelines and response times.",
+          "Pitch an essay, submit poetry or fiction, or write to the Almarifah editors. Submission guidelines and response times.",
       },
-      { property: "og:title", content: "Contact & Submissions — Alma'rifa" },
-      { property: "og:description", content: "Pitch an essay or submit poetry to Alma'rifa." },
+      { property: "og:title", content: "Contact & Submissions — Almarifah" },
+      { property: "og:description", content: "Pitch an essay or submit poetry to Almarifah." },
       { property: "og:url", content: "/contact" },
     ],
     links: [{ rel: "canonical", href: "/contact" }],
@@ -46,10 +46,10 @@ function ContactPage() {
         </div>
         <div className="mt-8 space-y-3 text-sm">
           <p className="flex items-center gap-2 text-muted-foreground">
-            <Mail className="h-4 w-4 text-accent" aria-hidden /> editors@almarifa.example
+            <Mail className="h-4 w-4 text-accent" aria-hidden /> editors@almarifah.example
           </p>
           <p className="flex items-center gap-2 text-muted-foreground">
-            <PenLine className="h-4 w-4 text-accent" aria-hidden /> submissions@almarifa.example
+            <PenLine className="h-4 w-4 text-accent" aria-hidden /> submissions@almarifah.example
           </p>
         </div>
       </div>

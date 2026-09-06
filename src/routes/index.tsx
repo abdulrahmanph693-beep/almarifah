@@ -15,13 +15,13 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Alma'rifa — A Hub for Thought, Literature, and Knowledge" },
+      { title: "Almarifah — A Hub for Thought, Literature, and Knowledge" },
       {
         name: "description",
         content:
           "Essays, poetry, short stories and criticism in English. The official English edition of Ainul-Haqq.",
       },
-      { property: "og:title", content: "Alma'rifa — Thought, Literature, and Knowledge" },
+      { property: "og:title", content: "Almarifah — Thought, Literature, and Knowledge" },
       {
         property: "og:description",
         content: "Long-form essays, poetry and criticism for slow, serious reading.",

@@ -11,16 +11,16 @@ import { Label } from "@/components/ui/label";
 export const Route = createFileRoute("/auth")({
   head: () => ({
     meta: [
-      { title: "Sign in or create an account — Alma'rifa" },
+      { title: "Sign in or create an account — Almarifah" },
       {
         name: "description",
         content:
-          "Sign in to Alma'rifa to submit essays and poems, follow their review status, and manage your contributor profile.",
+          "Sign in to Almarifah to submit essays and poems, follow their review status, and manage your contributor profile.",
       },
-      { property: "og:title", content: "Sign in or create an account — Alma'rifa" },
+      { property: "og:title", content: "Sign in or create an account — Almarifah" },
       {
         property: "og:description",
-        content: "Contributor and editor access for Alma'rifa.",
+        content: "Contributor and editor access for Almarifah.",
       },
       { property: "og:url", content: "/auth" },
     ],
@@ -98,7 +98,7 @@ function AuthPage() {
           toast.success("Account created — check your email to confirm it.");
           return;
         }
-        toast.success("Welcome to Alma'rifa.");
+        toast.success("Welcome to Almarifah.");
         navigate({ to: "/dashboard", replace: true });
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -136,7 +136,7 @@ function AuthPage() {
         : "Welcome back";
   const subtitle =
     mode === "signup"
-      ? "Join Alma'rifa to submit your essays and poems for review."
+      ? "Join Almarifah to submit your essays and poems for review."
       : mode === "forgot"
         ? "Enter your account email and we'll send you a link to set a new password."
         : "Sign in to your contributor or editor account.";

@@ -61,7 +61,7 @@ export const authors: Author[] = [
     name: "Layla Nasser",
     role: "Contributing Editor",
     initials: "LN",
-    bio: "Layla writes on metaphysics and the ethics of attention. She teaches comparative philosophy and edits the Essays desk at Alma'rifa.",
+    bio: "Layla writes on metaphysics and the ethics of attention. She teaches comparative philosophy and edits the Essays desk at Almarifah.",
   },
   {
     slug: "omar-haddad",
