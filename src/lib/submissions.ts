@@ -10,6 +10,7 @@ export type Submission = {
   category: string;
   excerpt: string;
   body: string;
+  cover_image: string;
   status: SubmissionStatus;
   review_note: string;
   published_at: string | null;
