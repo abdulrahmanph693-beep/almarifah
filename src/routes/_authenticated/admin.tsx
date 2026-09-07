@@ -155,6 +155,42 @@ function AdminDesk() {
     queryClient.invalidateQueries({ queryKey: ["all-submissions"] });
   }
 
+  async function saveEdits(work: Submission) {
+    if (!edit) return;
+    const { error } = await supabase
+      .from("submissions")
+      .update({
+        title: edit.title,
+        subtitle: edit.subtitle,
+        excerpt: edit.excerpt,
+        body: edit.body,
+        cover_image: edit.cover_image,
+        review_note: note,
+      })
+      .eq("id", work.id);
+    if (error) {
+      toast.error("Could not save the changes.");
+      return;
+    }
+    toast.success("Changes saved.");
+    queryClient.invalidateQueries({ queryKey: ["all-submissions"] });
+  }
+
+  async function removeWork(work: Submission) {
+    const { error } = await supabase.from("submissions").delete().eq("id", work.id);
+    if (error) {
+      toast.error("Could not delete this work.");
+      return;
+    }
+    if (openId === work.id) {
+      setOpenId(null);
+      setEdit(null);
+      setNote("");
+    }
+    toast.success("Deleted.");
+    queryClient.invalidateQueries({ queryKey: ["all-submissions"] });
+  }
+
   if (loading) return <p className="p-12 text-sm text-muted-foreground">Loading…</p>;
 
   if (!isAdmin) {
