@@ -48,6 +48,15 @@ const emptyDraft = {
   category: "Literature",
   excerpt: "",
   body: "",
+  cover_image: "",
+};
+
+type EditState = {
+  title: string;
+  subtitle: string;
+  excerpt: string;
+  body: string;
+  cover_image: string;
 };
 
 function AdminDesk() {
@@ -57,9 +66,7 @@ function AdminDesk() {
   const [note, setNote] = useState("");
   const [draft, setDraft] = useState(emptyDraft);
   const [busy, setBusy] = useState(false);
-  const [edit, setEdit] = useState<{ title: string; subtitle: string; body: string } | null>(
-    null,
-  );
+  const [edit, setEdit] = useState<EditState | null>(null);
 
   async function createOwnWork(publishNow: boolean) {
     const userId = session?.user.id;
