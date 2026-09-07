@@ -301,6 +301,11 @@ function AdminDesk() {
                 onChange={(e) => setDraft({ ...draft, excerpt: e.target.value })}
               />
             </div>
+            <CoverImagePicker
+              id="admin-cover"
+              value={draft.cover_image}
+              onChange={(v) => setDraft({ ...draft, cover_image: v })}
+            />
             <div className="space-y-2">
               <Label htmlFor="admin-body">Full text</Label>
               <Textarea
