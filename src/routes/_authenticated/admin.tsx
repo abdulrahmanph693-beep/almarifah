@@ -177,6 +177,7 @@ function AdminDesk() {
 
       <Tabs defaultValue="pending" className="mt-10">
         <TabsList>
+          <TabsTrigger value="write">Write</TabsTrigger>
           <TabsTrigger value="pending">Pending ({byStatus("pending").length})</TabsTrigger>
           <TabsTrigger value="approved">Approved ({byStatus("approved").length})</TabsTrigger>
           <TabsTrigger value="published">
