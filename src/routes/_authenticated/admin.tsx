@@ -10,9 +10,18 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   statusClass,
   statusLabel,
+  submissionCategories,
   type Submission,
+  type SubmissionKind,
   type SubmissionStatus,
 } from "@/lib/submissions";
 
@@ -32,14 +41,61 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminDesk,
 });
 
+const emptyDraft = {
+  title: "",
+  subtitle: "",
+  kind: "essay" as SubmissionKind,
+  category: "Literature",
+  excerpt: "",
+  body: "",
+};
+
 function AdminDesk() {
-  const { isAdmin, loading } = useAuth();
+  const { isAdmin, loading, session } = useAuth();
   const queryClient = useQueryClient();
   const [openId, setOpenId] = useState<string | null>(null);
   const [note, setNote] = useState("");
+  const [draft, setDraft] = useState(emptyDraft);
+  const [busy, setBusy] = useState(false);
   const [edit, setEdit] = useState<{ title: string; subtitle: string; body: string } | null>(
     null,
   );
+
+  async function createOwnWork(publishNow: boolean) {
+    const userId = session?.user.id;
+    if (!userId) return;
+    if (!draft.title.trim() || !draft.body.trim()) {
+      toast.error("Add a title and the full text first.");
+      return;
+    }
+    setBusy(true);
+    const { data, error } = await supabase
+      .from("submissions")
+      .insert({ ...draft, author_id: userId, status: "pending" as const })
+      .select("id")
+      .single();
+    if (error || !data) {
+      setBusy(false);
+      toast.error("Could not save this work.");
+      return;
+    }
+    if (publishNow) {
+      const { error: pubError } = await supabase
+        .from("submissions")
+        .update({ status: "published" as const, published_at: new Date().toISOString() })
+        .eq("id", data.id);
+      if (pubError) {
+        setBusy(false);
+        toast.error("Saved as a draft, but publishing failed.");
+        queryClient.invalidateQueries({ queryKey: ["all-submissions"] });
+        return;
+      }
+    }
+    setBusy(false);
+    setDraft(emptyDraft);
+    toast.success(publishNow ? "Published to the site." : "Saved as pending.");
+    queryClient.invalidateQueries({ queryKey: ["all-submissions"] });
+  }
 
   const worksQuery = useQuery({
     queryKey: ["all-submissions"],
@@ -121,6 +177,7 @@ function AdminDesk() {
 
       <Tabs defaultValue="pending" className="mt-10">
         <TabsList>
+          <TabsTrigger value="write">Write</TabsTrigger>
           <TabsTrigger value="pending">Pending ({byStatus("pending").length})</TabsTrigger>
           <TabsTrigger value="approved">Approved ({byStatus("approved").length})</TabsTrigger>
           <TabsTrigger value="published">
@@ -128,6 +185,105 @@ function AdminDesk() {
           </TabsTrigger>
           <TabsTrigger value="rejected">Returned ({byStatus("rejected").length})</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="write" className="mt-8">
+          <div className="rule-accent mb-6">
+            <h2 className="font-serif text-2xl">Write your own work</h2>
+          </div>
+          <form
+            className="space-y-4"
+            onSubmit={(e) => {
+              e.preventDefault();
+              createOwnWork(true);
+            }}
+          >
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2 sm:col-span-2">
+                <Label htmlFor="admin-title">Title</Label>
+                <Input
+                  id="admin-title"
+                  value={draft.title}
+                  onChange={(e) => setDraft({ ...draft, title: e.target.value })}
+                  required
+                />
+              </div>
+              <div className="space-y-2 sm:col-span-2">
+                <Label htmlFor="admin-subtitle">Subtitle</Label>
+                <Input
+                  id="admin-subtitle"
+                  value={draft.subtitle}
+                  onChange={(e) => setDraft({ ...draft, subtitle: e.target.value })}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>Type</Label>
+                <Select
+                  value={draft.kind}
+                  onValueChange={(v) => setDraft({ ...draft, kind: v as SubmissionKind })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="essay">Essay / article</SelectItem>
+                    <SelectItem value="poem">Poem</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Category</Label>
+                <Select
+                  value={draft.category}
+                  onValueChange={(v) => setDraft({ ...draft, category: v })}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {submissionCategories.map((c) => (
+                      <SelectItem key={c} value={c}>
+                        {c}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="admin-excerpt">Short summary</Label>
+              <Textarea
+                id="admin-excerpt"
+                rows={2}
+                value={draft.excerpt}
+                onChange={(e) => setDraft({ ...draft, excerpt: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="admin-body">Full text</Label>
+              <Textarea
+                id="admin-body"
+                rows={14}
+                value={draft.body}
+                onChange={(e) => setDraft({ ...draft, body: e.target.value })}
+                required
+              />
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Button type="submit" disabled={busy}>
+                {busy ? "Working…" : "Publish now"}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                disabled={busy}
+                onClick={() => createOwnWork(false)}
+              >
+                Save as draft
+              </Button>
+            </div>
+          </form>
+        </TabsContent>
+
         {(["pending", "approved", "published", "rejected"] as const).map((status) => (
           <TabsContent key={status} value={status} className="mt-8 space-y-5">
             {byStatus(status).length === 0 && (
