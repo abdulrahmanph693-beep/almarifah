@@ -41,14 +41,61 @@ export const Route = createFileRoute("/_authenticated/admin")({
   component: AdminDesk,
 });
 
+const emptyDraft = {
+  title: "",
+  subtitle: "",
+  kind: "essay" as SubmissionKind,
+  category: "Literature",
+  excerpt: "",
+  body: "",
+};
+
 function AdminDesk() {
-  const { isAdmin, loading } = useAuth();
+  const { isAdmin, loading, session } = useAuth();
   const queryClient = useQueryClient();
   const [openId, setOpenId] = useState<string | null>(null);
   const [note, setNote] = useState("");
+  const [draft, setDraft] = useState(emptyDraft);
+  const [busy, setBusy] = useState(false);
   const [edit, setEdit] = useState<{ title: string; subtitle: string; body: string } | null>(
     null,
   );
+
+  async function createOwnWork(publishNow: boolean) {
+    const userId = session?.user.id;
+    if (!userId) return;
+    if (!draft.title.trim() || !draft.body.trim()) {
+      toast.error("Add a title and the full text first.");
+      return;
+    }
+    setBusy(true);
+    const { data, error } = await supabase
+      .from("submissions")
+      .insert({ ...draft, author_id: userId, status: "pending" as const })
+      .select("id")
+      .single();
+    if (error || !data) {
+      setBusy(false);
+      toast.error("Could not save this work.");
+      return;
+    }
+    if (publishNow) {
+      const { error: pubError } = await supabase
+        .from("submissions")
+        .update({ status: "published" as const, published_at: new Date().toISOString() })
+        .eq("id", data.id);
+      if (pubError) {
+        setBusy(false);
+        toast.error("Saved as a draft, but publishing failed.");
+        queryClient.invalidateQueries({ queryKey: ["all-submissions"] });
+        return;
+      }
+    }
+    setBusy(false);
+    setDraft(emptyDraft);
+    toast.success(publishNow ? "Published to the site." : "Saved as pending.");
+    queryClient.invalidateQueries({ queryKey: ["all-submissions"] });
+  }
 
   const worksQuery = useQuery({
     queryKey: ["all-submissions"],
