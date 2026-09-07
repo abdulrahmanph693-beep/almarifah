@@ -340,12 +340,21 @@ function AdminDesk() {
             {byStatus(status).map((work) => (
               <article key={work.id} className="rounded-md border border-border p-5">
                 <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div>
-                    <h2 className="font-serif text-xl leading-snug">{work.title}</h2>
-                    <p className="mt-1 text-xs uppercase tracking-[0.14em] text-muted-foreground">
-                      {authorName.get(work.author_id) ?? "Unknown author"} ·{" "}
-                      {work.kind === "poem" ? "Poem" : "Essay"} · {work.category}
-                    </p>
+                  <div className="flex gap-4">
+                    {work.cover_image && (
+                      <img
+                        src={work.cover_image}
+                        alt=""
+                        className="hidden h-16 w-28 rounded object-cover sm:block"
+                      />
+                    )}
+                    <div>
+                      <h2 className="font-serif text-xl leading-snug">{work.title}</h2>
+                      <p className="mt-1 text-xs uppercase tracking-[0.14em] text-muted-foreground">
+                        {authorName.get(work.author_id) ?? "Unknown author"} ·{" "}
+                        {work.kind === "poem" ? "Poem" : "Essay"} · {work.category}
+                      </p>
+                    </div>
                   </div>
                   <span
                     className={`rounded-full border px-3 py-1 text-[0.7rem] uppercase tracking-[0.12em] ${statusClass[work.status]}`}
@@ -354,27 +363,51 @@ function AdminDesk() {
                   </span>
                 </div>
 
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="mt-4"
-                  onClick={() => {
-                    const next = openId === work.id ? null : work.id;
-                    setOpenId(next);
-                    setNote(next ? work.review_note : "");
-                    setEdit(
-                      next
-                        ? {
-                            title: work.title,
-                            subtitle: work.subtitle,
-                            body: work.body,
-                          }
-                        : null,
-                    );
-                  }}
-                >
-                  {openId === work.id ? "Close" : "Review"}
-                </Button>
+                <div className="mt-4 flex flex-wrap gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      const next = openId === work.id ? null : work.id;
+                      setOpenId(next);
+                      setNote(next ? work.review_note : "");
+                      setEdit(
+                        next
+                          ? {
+                              title: work.title,
+                              subtitle: work.subtitle,
+                              excerpt: work.excerpt,
+                              body: work.body,
+                              cover_image: work.cover_image,
+                            }
+                          : null,
+                      );
+                    }}
+                  >
+                    {openId === work.id ? "Close" : "Edit / review"}
+                  </Button>
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button variant="ghost" size="sm" className="text-destructive">
+                        Delete
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Delete “{work.title}”?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          This removes the work permanently. It cannot be undone.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => removeWork(work)}>
+                          Delete
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </div>
 
                 {openId === work.id && edit && (
                   <div className="mt-5 space-y-4 border-t border-border pt-5">
@@ -392,6 +425,20 @@ function AdminDesk() {
                         id={`s-${work.id}`}
                         value={edit.subtitle}
                         onChange={(e) => setEdit({ ...edit, subtitle: e.target.value })}
+                      />
+                    </div>
+                    <CoverImagePicker
+                      id={`c-${work.id}`}
+                      value={edit.cover_image}
+                      onChange={(v) => setEdit({ ...edit, cover_image: v })}
+                    />
+                    <div className="space-y-2">
+                      <Label htmlFor={`e-${work.id}`}>Short summary</Label>
+                      <Textarea
+                        id={`e-${work.id}`}
+                        rows={2}
+                        value={edit.excerpt}
+                        onChange={(e) => setEdit({ ...edit, excerpt: e.target.value })}
                       />
                     </div>
                     <div className="space-y-2">
@@ -413,14 +460,15 @@ function AdminDesk() {
                       />
                     </div>
                     <div className="flex flex-wrap gap-2">
-                      <Button onClick={() => setStatus(work, "approved")}>
-                        Save & approve
-                      </Button>
+                      <Button onClick={() => saveEdits(work)}>Save changes</Button>
                       <Button variant="secondary" onClick={() => setStatus(work, "published")}>
-                        Publish
+                        {work.status === "published" ? "Republish" : "Publish"}
+                      </Button>
+                      <Button variant="outline" onClick={() => setStatus(work, "approved")}>
+                        Approve
                       </Button>
                       <Button variant="outline" onClick={() => setStatus(work, "pending")}>
-                        Keep pending
+                        {work.status === "pending" ? "Keep pending" : "Send back to pending"}
                       </Button>
                       <Button variant="destructive" onClick={() => setStatus(work, "rejected")}>
                         Return to author
