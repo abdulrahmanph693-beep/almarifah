@@ -24,6 +24,8 @@ export type Post = {
   category: string;
   tags: string[];
   authorSlug: string;
+  authorName?: string;
+  authorBio?: string;
   date: string;
   readTime: number;
   image: string;
@@ -88,6 +90,27 @@ export const authors: Author[] = [
 
 export function authorBySlug(slug: string): Author {
   return authors.find((a) => a.slug === slug) ?? authors[0]!;
+}
+
+/** Author info for any post: published works carry their own author, samples use the roster. */
+export function resolveAuthor(post: Post): Author {
+  if (post.authorName) {
+    const initials =
+      post.authorName
+        .trim()
+        .split(/\s+/)
+        .slice(0, 2)
+        .map((p) => (p[0] ?? "").toUpperCase())
+        .join("") || "A";
+    return {
+      slug: post.authorSlug,
+      name: post.authorName,
+      role: "Contributor",
+      bio: post.authorBio ?? "",
+      initials,
+    };
+  }
+  return authorBySlug(post.authorSlug);
 }
 
 const lorem = (topic: string) => [
