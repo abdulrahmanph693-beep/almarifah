@@ -1,18 +1,28 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { Clock } from "lucide-react";
 import { ArticleCard } from "@/components/article-card";
 import { Newsletter } from "@/components/newsletter";
 import { AuthorSpotlight, MostRead } from "@/components/sidebar-widgets";
 import {
-  authorBySlug,
   formatDate,
   posts,
   postsBySection,
+  resolveAuthor,
   sortedPosts,
   sectionLabel,
 } from "@/lib/content";
+import {
+  deriveContributors,
+  poemPreview,
+  publishedWorksOptions,
+  worksToPosts,
+} from "@/lib/works";
 
 export const Route = createFileRoute("/")({
+  loader: async ({ context }) => {
+    await context.queryClient.ensureQueryData(publishedWorksOptions);
+  },
   head: () => ({
     meta: [
       { title: "Almarifah — A Hub for Thought, Literature, and Knowledge" },
@@ -34,14 +44,22 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
+  const { data: workRows = [] } = useSuspenseQuery(publishedWorksOptions);
+  const workPosts = worksToPosts(workRows);
+  const worksMode = workPosts.length > 0;
+
   const featured = posts.filter((p) => p.featured);
-  const lead = featured[0]!;
-  const rest = featured.slice(1);
-  const recent = sortedPosts.slice(0, 6);
-  const essays = postsBySection("essays").slice(0, 2);
-  const poems = postsBySection("poetry");
-  const editors = posts.filter((p) => p.editorsChoice);
-  const leadAuthor = authorBySlug(lead.authorSlug);
+  const lead = worksMode ? workPosts[0]! : featured[0]!;
+  const picks = worksMode ? workPosts.slice(1, 4) : featured.slice(1);
+  const recent = worksMode ? workPosts.slice(0, 6) : sortedPosts.slice(0, 6);
+  const essays = worksMode
+    ? workPosts.filter((p) => p.section === "essays").slice(0, 2)
+    : postsBySection("essays").slice(0, 2);
+  const editors = worksMode ? workPosts.slice(4, 7) : posts.filter((p) => p.editorsChoice);
+  const poems = worksMode
+    ? workPosts.filter((p) => p.section === "poetry")
+    : postsBySection("poetry");
+  const leadAuthor = resolveAuthor(lead);
 
   return (
     <>
@@ -90,12 +108,14 @@ function Home() {
             </div>
           </article>
 
-          <div className="flex flex-col gap-6 border-t border-border pt-6 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
-            <h2 className="eyebrow">Editorial Picks</h2>
-            {rest.map((post) => (
-              <ArticleCard key={post.slug} post={post} variant="wide" />
-            ))}
-          </div>
+          {picks.length > 0 && (
+            <div className="flex flex-col gap-6 border-t border-border pt-6 lg:border-l lg:border-t-0 lg:pl-8 lg:pt-0">
+              <h2 className="eyebrow">Editorial Picks</h2>
+              {picks.map((post) => (
+                <ArticleCard key={post.slug} post={post} variant="wide" />
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -136,77 +156,82 @@ function Home() {
             </div>
           </section>
 
-          <section aria-labelledby="editors-heading">
-            <div className="rule-accent mb-8">
-              <h2 id="editors-heading" className="font-serif text-2xl">
-                Editor's Choice & Opinion
-              </h2>
-            </div>
-            <div className="grid gap-6 md:grid-cols-3">
-              {editors.map((post) => (
-                <article key={post.slug} className="border-t-2 border-accent pt-4">
-                  <span className="eyebrow">{post.category}</span>
-                  <h3 className="mt-2 font-serif text-xl leading-snug">
-                    <Link
-                      to="/article/$slug"
-                      params={{ slug: post.slug }}
-                      className="hover:text-accent"
-                    >
-                      {post.title}
-                    </Link>
-                  </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                    {post.excerpt}
-                  </p>
-                </article>
-              ))}
-            </div>
-          </section>
+          {editors.length > 0 && (
+            <section aria-labelledby="editors-heading">
+              <div className="rule-accent mb-8">
+                <h2 id="editors-heading" className="font-serif text-2xl">
+                  {worksMode ? "More from the Desk" : "Editor's Choice & Opinion"}
+                </h2>
+              </div>
+              <div className="grid gap-6 md:grid-cols-3">
+                {editors.map((post) => (
+                  <article key={post.slug} className="border-t-2 border-accent pt-4">
+                    <span className="eyebrow">{post.category}</span>
+                    <h3 className="mt-2 font-serif text-xl leading-snug">
+                      <Link
+                        to="/article/$slug"
+                        params={{ slug: post.slug }}
+                        className="hover:text-accent"
+                      >
+                        {post.title}
+                      </Link>
+                    </h3>
+                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                      {post.excerpt}
+                    </p>
+                  </article>
+                ))}
+              </div>
+            </section>
+          )}
         </div>
 
         <aside className="space-y-12 lg:border-l lg:border-border lg:pl-8">
-          <MostRead />
-          <AuthorSpotlight />
+          <MostRead posts={worksMode ? workPosts : undefined} />
+          <AuthorSpotlight contributors={worksMode ? deriveContributors(workPosts) : undefined} />
           <Newsletter />
         </aside>
       </div>
 
       {/* Poetry corner */}
-      <section aria-labelledby="poetry-heading" className="ambient-poetry border-y border-border">
-        <div className="mx-auto max-w-4xl px-4 py-20 text-center sm:px-6">
-          <span className="eyebrow">Poetry Corner</span>
-          <h2 id="poetry-heading" className="mt-3 font-serif text-3xl sm:text-4xl">
-            Where the line break does the thinking
-          </h2>
-          <div className="mt-12 space-y-16">
-            {poems.map((poem) => (
-              <article key={poem.slug}>
-                <p className="poem mx-auto max-w-xl text-foreground">
-                  {poem.poem?.split("*")[0]?.trim()}
-                </p>
-                <h3 className="mt-8 font-serif text-xl">
-                  <Link
-                    to="/article/$slug"
-                    params={{ slug: poem.slug }}
-                    className="hover:text-accent"
-                  >
-                    {poem.title}
-                  </Link>
-                </h3>
-                <p className="mt-1 text-xs uppercase tracking-[0.16em] text-muted-foreground">
-                  {authorBySlug(poem.authorSlug).name}
-                </p>
-              </article>
-            ))}
+      {poems.length > 0 && (
+        <section
+          aria-labelledby="poetry-heading"
+          className="ambient-poetry border-y border-border"
+        >
+          <div className="mx-auto max-w-4xl px-4 py-20 text-center sm:px-6">
+            <span className="eyebrow">Poetry Corner</span>
+            <h2 id="poetry-heading" className="mt-3 font-serif text-3xl sm:text-4xl">
+              Where the line break does the thinking
+            </h2>
+            <div className="mt-12 space-y-16">
+              {poems.map((poem) => (
+                <article key={poem.slug}>
+                  <p className="poem mx-auto max-w-xl text-foreground">{poemPreview(poem)}</p>
+                  <h3 className="mt-8 font-serif text-xl">
+                    <Link
+                      to="/article/$slug"
+                      params={{ slug: poem.slug }}
+                      className="hover:text-accent"
+                    >
+                      {poem.title}
+                    </Link>
+                  </h3>
+                  <p className="mt-1 text-xs uppercase tracking-[0.16em] text-muted-foreground">
+                    {resolveAuthor(poem).name}
+                  </p>
+                </article>
+              ))}
+            </div>
+            <Link
+              to="/poetry"
+              className="mt-14 inline-flex items-center rounded-md bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition-opacity hover:opacity-90"
+            >
+              Enter the Poetry Corner
+            </Link>
           </div>
-          <Link
-            to="/poetry"
-            className="mt-14 inline-flex items-center rounded-md bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition-opacity hover:opacity-90"
-          >
-            Enter the Poetry Corner
-          </Link>
-        </div>
-      </section>
+        </section>
+      )}
     </>
   );
 }
