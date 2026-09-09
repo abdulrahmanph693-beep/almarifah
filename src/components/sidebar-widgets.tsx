@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { authors, popularPosts, type Author, type Post } from "@/lib/content";
 
-export function MostRead({ posts = popularPosts }: { posts?: Post[] }) {
+export function MostRead({ posts = popularPosts }: { posts?: Post[] | undefined }) {
   return (
     <section aria-labelledby="most-read-heading">
       <h2 id="most-read-heading" className="eyebrow">
