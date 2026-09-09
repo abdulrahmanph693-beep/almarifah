@@ -51,6 +51,7 @@ export function workToPost(w: PublishedWorkRow): Post {
           .map((p) => p.trim())
           .filter(Boolean),
     poem: isPoem ? w.body : undefined,
+    popularity: 0,
     authorName: w.author_name,
     authorBio: w.author_bio,
   };

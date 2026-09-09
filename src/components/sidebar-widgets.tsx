@@ -30,7 +30,11 @@ export function MostRead({ posts = popularPosts }: { posts?: Post[] | undefined 
   );
 }
 
-export function AuthorSpotlight({ contributors = authors }: { contributors?: Author[] }) {
+export function AuthorSpotlight({
+  contributors = authors,
+}: {
+  contributors?: Author[] | undefined;
+}) {
   return (
     <section aria-labelledby="contributors-heading">
       <h2 id="contributors-heading" className="eyebrow">
