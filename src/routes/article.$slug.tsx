@@ -1,22 +1,33 @@
 import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { Clock, Copy, Facebook, Linkedin, MessageCircle, Twitter } from "lucide-react";
 import { toast } from "sonner";
 import { ArticleCard } from "@/components/article-card";
 import { Comments } from "@/components/comments";
 import {
-  authorBySlug,
   formatDate,
   postBySlug,
   relatedPosts,
+  resolveAuthor,
   sectionLabel,
+  type Post,
 } from "@/lib/content";
+import {
+  poemStanzas,
+  publishedWorksOptions,
+  relatedWorks,
+  worksToPosts,
+} from "@/lib/works";
 
 export const Route = createFileRoute("/article/$slug")({
-  loader: ({ params }) => {
-    const post = postBySlug(params.slug);
-    if (!post) throw notFound();
-    return { post };
+  loader: async ({ params, context }) => {
+    const local = postBySlug(params.slug);
+    if (local) return { post: local as Post };
+    const rows = await context.queryClient.ensureQueryData(publishedWorksOptions);
+    const found = worksToPosts(rows).find((p) => p.slug === params.slug);
+    if (found) return { post: found };
+    throw notFound();
   },
   head: ({ params, loaderData }) => {
     if (!loaderData) {
@@ -25,7 +36,7 @@ export const Route = createFileRoute("/article/$slug")({
       };
     }
     const { post } = loaderData;
-    const author = authorBySlug(post.authorSlug);
+    const author = resolveAuthor(post);
     return {
       meta: [
         { title: `${post.title} — Almarifah` },
@@ -118,10 +129,16 @@ function ShareBar({ title }: { title: string }) {
 
 function ArticlePage() {
   const { post } = Route.useLoaderData();
-  const author = authorBySlug(post.authorSlug);
+  const { data: workRows = [] } = useQuery(publishedWorksOptions);
+  const workPosts = worksToPosts(workRows);
+
+  const author = resolveAuthor(post);
   const progress = useReadingProgress();
-  const related = relatedPosts(post);
+  const related = post.authorName
+    ? relatedWorks(post, workPosts)
+    : relatedPosts(post);
   const isPoem = post.section === "poetry";
+  const stanzas = poemStanzas(post);
 
   return (
     <div className={isPoem ? "ambient-poetry" : undefined}>
@@ -141,9 +158,11 @@ function ArticlePage() {
             {sectionLabel(post.section)} · {post.category}
           </span>
           <h1 className="mt-4 font-serif text-4xl leading-[1.12] sm:text-5xl">{post.title}</h1>
-          <p className="mt-4 font-serif text-xl italic leading-relaxed text-muted-foreground">
-            {post.subtitle}
-          </p>
+          {post.subtitle && (
+            <p className="mt-4 font-serif text-xl italic leading-relaxed text-muted-foreground">
+              {post.subtitle}
+            </p>
+          )}
 
           <div
             className={`mt-8 flex flex-wrap items-center gap-4 border-y border-border py-4 ${
@@ -192,40 +211,44 @@ function ArticlePage() {
               />
             )}
 
-            <div className="prose-reading">
-              {post.body.map((para, i) => (
-                <p key={i} className={i === 0 && !isPoem ? "dropcap" : undefined}>
-                  {para}
-                </p>
-              ))}
-            </div>
-
-            {post.poem && (
-              <div className="my-12 space-y-14">
-                {post.poem.split("\n*\n").map((stanza, i) => (
-                  <p key={i} className="poem text-foreground">
-                    {stanza.trim()}
+            {post.body.length > 0 && (
+              <div className="prose-reading">
+                {post.body.map((para, i) => (
+                  <p key={i} className={i === 0 && !isPoem ? "dropcap" : undefined}>
+                    {para}
                   </p>
                 ))}
               </div>
             )}
 
-            {!isPoem && (
+            {stanzas.length > 0 && (
+              <div className="my-12 space-y-14">
+                {stanzas.map((stanza, i) => (
+                  <p key={i} className="poem text-foreground">
+                    {stanza}
+                  </p>
+                ))}
+              </div>
+            )}
+
+            {!isPoem && !post.authorName && (
               <blockquote className="prose-reading">
                 The work is slow, and the slowness is the method.
               </blockquote>
             )}
 
-            <ul className="mt-10 flex flex-wrap gap-2">
-              {post.tags.map((t) => (
-                <li
-                  key={t}
-                  className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground"
-                >
-                  #{t}
-                </li>
-              ))}
-            </ul>
+            {post.tags.length > 0 && (
+              <ul className="mt-10 flex flex-wrap gap-2">
+                {post.tags.map((t) => (
+                  <li
+                    key={t}
+                    className="rounded-full border border-border px-3 py-1 text-xs text-muted-foreground"
+                  >
+                    #{t}
+                  </li>
+                ))}
+              </ul>
+            )}
 
             <section
               aria-labelledby="author-bio-heading"
@@ -244,7 +267,11 @@ function ArticlePage() {
                 <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">
                   {author.role}
                 </p>
-                <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{author.bio}</p>
+                {author.bio && (
+                  <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                    {author.bio}
+                  </p>
+                )}
               </div>
             </section>
 
@@ -253,26 +280,28 @@ function ArticlePage() {
         </div>
       </article>
 
-      <section aria-labelledby="related-heading" className="border-t border-border">
-        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6">
-          <div className="rule-accent mb-8">
-            <h2 id="related-heading" className="font-serif text-2xl">
-              Related Reading
-            </h2>
+      {related.length > 0 && (
+        <section aria-labelledby="related-heading" className="border-t border-border">
+          <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6">
+            <div className="rule-accent mb-8">
+              <h2 id="related-heading" className="font-serif text-2xl">
+                Related Reading
+              </h2>
+            </div>
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {related.map((p) => (
+                <ArticleCard key={p.slug} post={p} />
+              ))}
+            </div>
+            <Link
+              to="/articles"
+              className="mt-8 inline-block text-xs uppercase tracking-[0.16em] text-accent hover:underline"
+            >
+              Back to the archive
+            </Link>
           </div>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {related.map((p) => (
-              <ArticleCard key={p.slug} post={p} />
-            ))}
-          </div>
-          <Link
-            to="/articles"
-            className="mt-8 inline-block text-xs uppercase tracking-[0.16em] text-accent hover:underline"
-          >
-            Back to the archive
-          </Link>
-        </div>
-      </section>
+        </section>
+      )}
     </div>
   );
 }

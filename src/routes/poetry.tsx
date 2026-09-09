@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { formatDate, resolveAuthor } from "@/lib/content";
+import { formatDate, postsBySection, resolveAuthor } from "@/lib/content";
 import { poemPreview, publishedWorksOptions, worksToPosts } from "@/lib/works";
 
 export const Route = createFileRoute("/poetry")({
@@ -28,15 +28,9 @@ function PoetryPage() {
   const { data: workRows = [] } = useSuspenseQuery(publishedWorksOptions);
   const workPosts = worksToPosts(workRows);
   const worksMode = workPosts.length > 0;
-
   const poems = worksMode
     ? workPosts.filter((p) => p.section === "poetry")
-    : workPosts.length === 0
-      ? []
-      : [];
-
-  const samplePoems = worksMode ? [] : undefined;
-  void samplePoems;
+    : postsBySection("poetry");
 
   return (
     <div className="ambient-poetry">
@@ -49,7 +43,11 @@ function PoetryPage() {
       </div>
 
       <div className="mx-auto max-w-3xl space-y-20 px-4 pb-24 sm:px-6">
-        {poems.length === 0 && !worksMode && <SamplePoems />}
+        {poems.length === 0 && (
+          <p className="text-center font-serif text-lg text-muted-foreground">
+            No poems have been published yet.
+          </p>
+        )}
         {poems.map((poem) => (
           <article key={poem.slug} className="text-center">
             <h2 className="font-serif text-3xl">
@@ -70,41 +68,7 @@ function PoetryPage() {
             </Link>
           </article>
         ))}
-        {poems.length === 0 && worksMode && (
-          <p className="text-center font-serif text-lg text-muted-foreground">
-            No poems have been published yet.
-          </p>
-        )}
       </div>
     </div>
-  );
-}
-
-function SamplePoems() {
-  const { postsBySection } = require("@/lib/content") as typeof import("@/lib/content");
-  const poems = postsBySection("poetry");
-  return (
-    <>
-      {poems.map((poem) => (
-        <article key={poem.slug} className="text-center">
-          <h2 className="font-serif text-3xl">
-            <Link to="/article/$slug" params={{ slug: poem.slug }} className="hover:text-accent">
-              {poem.title}
-            </Link>
-          </h2>
-          <p className="mt-2 text-xs uppercase tracking-[0.18em] text-muted-foreground">
-            {resolveAuthor(poem).name} · {formatDate(poem.date)}
-          </p>
-          <p className="poem mx-auto mt-10 max-w-xl text-foreground">{poemPreview(poem)}</p>
-          <Link
-            to="/article/$slug"
-            params={{ slug: poem.slug }}
-            className="mt-10 inline-block text-xs uppercase tracking-[0.18em] text-accent hover:underline"
-          >
-            Read the full poem
-          </Link>
-        </article>
-      ))}
-    </>
   );
 }
