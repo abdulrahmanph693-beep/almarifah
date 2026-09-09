@@ -1,8 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { PostArchive } from "@/components/post-archive";
 import { sortedPosts } from "@/lib/content";
+import { publishedWorksOptions, worksToPosts } from "@/lib/works";
 
 export const Route = createFileRoute("/articles")({
+  loader: async ({ context }) => {
+    await context.queryClient.ensureQueryData(publishedWorksOptions);
+  },
   head: () => ({
     meta: [
       { title: "Articles & Essays — Almarifah" },
@@ -24,7 +29,13 @@ export const Route = createFileRoute("/articles")({
 });
 
 function ArticlesPage() {
-  const posts = sortedPosts.filter((p) => p.section !== "poetry");
+  const { data: workRows = [] } = useSuspenseQuery(publishedWorksOptions);
+  const workPosts = worksToPosts(workRows);
+  const worksMode = workPosts.length > 0;
+
+  const posts = worksMode
+    ? workPosts.filter((p) => p.section !== "poetry")
+    : sortedPosts.filter((p) => p.section !== "poetry");
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6">

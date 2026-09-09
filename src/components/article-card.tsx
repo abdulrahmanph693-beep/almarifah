@@ -1,11 +1,11 @@
 import { Link } from "@tanstack/react-router";
 import { Clock } from "lucide-react";
-import { authorBySlug, formatDate, type Post } from "@/lib/content";
+import { resolveAuthor, formatDate, type Post } from "@/lib/content";
 
 type Props = { post: Post; variant?: "default" | "wide" | "minimal"; priority?: boolean };
 
 export function ArticleCard({ post, variant = "default", priority = false }: Props) {
-  const author = authorBySlug(post.authorSlug);
+  const author = resolveAuthor(post);
 
   if (variant === "minimal") {
     return (

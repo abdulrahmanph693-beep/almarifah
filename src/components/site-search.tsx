@@ -1,17 +1,25 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { Search } from "lucide-react";
 import { posts, sectionLabel } from "@/lib/content";
+import { publishedWorksOptions, worksToPosts } from "@/lib/works";
 
 export function SiteSearch({ compact = false }: { compact?: boolean }) {
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  const { data: workRows } = useQuery(publishedWorksOptions);
+  const pool = useMemo(() => {
+    const workPosts = worksToPosts(workRows);
+    return workPosts.length > 0 ? workPosts : posts;
+  }, [workRows]);
+
   const results = useMemo(() => {
     const q = query.trim().toLowerCase();
     if (q.length < 2) return [];
-    return posts
+    return pool
       .filter(
         (p) =>
           p.title.toLowerCase().includes(q) ||
@@ -20,7 +28,7 @@ export function SiteSearch({ compact = false }: { compact?: boolean }) {
           p.tags.some((t) => t.toLowerCase().includes(q)),
       )
       .slice(0, 6);
-  }, [query]);
+  }, [pool, query]);
 
   useEffect(() => {
     function onClick(e: MouseEvent) {

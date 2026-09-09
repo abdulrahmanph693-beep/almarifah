@@ -50,7 +50,8 @@ export function workToPost(w: PublishedWorkRow): Post {
           .split(/\n{2,}/)
           .map((p) => p.trim())
           .filter(Boolean),
-    poem: isPoem ? w.body : undefined,
+    ...(isPoem ? { poem: w.body } : {}),
+    popularity: 0,
     authorName: w.author_name,
     authorBio: w.author_bio,
   };

@@ -1,14 +1,14 @@
 import { Link } from "@tanstack/react-router";
-import { authors, popularPosts } from "@/lib/content";
+import { authors, popularPosts, type Author, type Post } from "@/lib/content";
 
-export function MostRead() {
+export function MostRead({ posts = popularPosts }: { posts?: Post[] | undefined }) {
   return (
     <section aria-labelledby="most-read-heading">
       <h2 id="most-read-heading" className="eyebrow">
         Most Read
       </h2>
       <ol className="mt-4 space-y-4">
-        {popularPosts.map((post, i) => (
+        {posts.slice(0, 5).map((post, i) => (
           <li key={post.slug} className="flex gap-3">
             <span className="font-serif text-2xl leading-none text-border">
               {String(i + 1).padStart(2, "0")}
@@ -30,15 +30,19 @@ export function MostRead() {
   );
 }
 
-export function AuthorSpotlight() {
+export function AuthorSpotlight({
+  contributors = authors,
+}: {
+  contributors?: Author[] | undefined;
+}) {
   return (
     <section aria-labelledby="contributors-heading">
       <h2 id="contributors-heading" className="eyebrow">
         Contributors
       </h2>
       <ul className="mt-4 space-y-4">
-        {authors.map((a) => (
-          <li key={a.slug} className="flex gap-3 rounded-md border border-border bg-card p-3">
+        {contributors.map((a) => (
+          <li key={a.name} className="flex gap-3 rounded-md border border-border bg-card p-3">
             <span
               aria-hidden
               className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-accent/15 font-serif text-sm text-accent"
