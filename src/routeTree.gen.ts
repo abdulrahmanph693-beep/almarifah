@@ -14,10 +14,10 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as ArticlesRouteImport } from './routes/articles'
 import { Route as AuthRouteImport } from './routes/auth'
-import { Route as ContactRouteImport } from './routes/contact'
 import { Route as GenresRouteImport } from './routes/genres'
 import { Route as PoetryRouteImport } from './routes/poetry'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as SubmissionsRouteImport } from './routes/submissions'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as ArticleSlugRouteImport } from './routes/article.$slug'
@@ -46,11 +46,6 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ContactRoute = ContactRouteImport.update({
-  id: '/contact',
-  path: '/contact',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const GenresRoute = GenresRouteImport.update({
   id: '/genres',
   path: '/genres',
@@ -64,6 +59,11 @@ const PoetryRoute = PoetryRouteImport.update({
 const ResetPasswordRoute = ResetPasswordRouteImport.update({
   id: '/reset-password',
   path: '/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SubmissionsRoute = SubmissionsRouteImport.update({
+  id: '/submissions',
+  path: '/submissions',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
@@ -87,10 +87,10 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/articles': typeof ArticlesRoute
   '/auth': typeof AuthRoute
-  '/contact': typeof ContactRoute
   '/genres': typeof GenresRoute
   '/poetry': typeof PoetryRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/submissions': typeof SubmissionsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/article/$slug': typeof ArticleSlugRoute
@@ -100,10 +100,10 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/articles': typeof ArticlesRoute
   '/auth': typeof AuthRoute
-  '/contact': typeof ContactRoute
   '/genres': typeof GenresRoute
   '/poetry': typeof PoetryRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/submissions': typeof SubmissionsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/article/$slug': typeof ArticleSlugRoute
@@ -115,10 +115,10 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/articles': typeof ArticlesRoute
   '/auth': typeof AuthRoute
-  '/contact': typeof ContactRoute
   '/genres': typeof GenresRoute
   '/poetry': typeof PoetryRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/submissions': typeof SubmissionsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/article/$slug': typeof ArticleSlugRoute
@@ -130,10 +130,10 @@ export interface FileRouteTypes {
     | '/about'
     | '/articles'
     | '/auth'
-    | '/contact'
     | '/genres'
     | '/poetry'
     | '/reset-password'
+    | '/submissions'
     | '/admin'
     | '/dashboard'
     | '/article/$slug'
@@ -143,10 +143,10 @@ export interface FileRouteTypes {
     | '/about'
     | '/articles'
     | '/auth'
-    | '/contact'
     | '/genres'
     | '/poetry'
     | '/reset-password'
+    | '/submissions'
     | '/admin'
     | '/dashboard'
     | '/article/$slug'
@@ -157,10 +157,10 @@ export interface FileRouteTypes {
     | '/about'
     | '/articles'
     | '/auth'
-    | '/contact'
     | '/genres'
     | '/poetry'
     | '/reset-password'
+    | '/submissions'
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
     | '/article/$slug'
@@ -172,10 +172,10 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   ArticlesRoute: typeof ArticlesRoute
   AuthRoute: typeof AuthRoute
-  ContactRoute: typeof ContactRoute
   GenresRoute: typeof GenresRoute
   PoetryRoute: typeof PoetryRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  SubmissionsRoute: typeof SubmissionsRoute
   ArticleSlugRoute: typeof ArticleSlugRoute
 }
 
@@ -216,13 +216,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/contact': {
-      id: '/contact'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof ContactRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/genres': {
       id: '/genres'
       path: '/genres'
@@ -242,6 +235,13 @@ declare module '@tanstack/react-router' {
       path: '/reset-password'
       fullPath: '/reset-password'
       preLoaderRoute: typeof ResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/submissions': {
+      id: '/submissions'
+      path: '/submissions'
+      fullPath: '/submissions'
+      preLoaderRoute: typeof SubmissionsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/_authenticated/admin': {
@@ -287,10 +287,10 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   ArticlesRoute: ArticlesRoute,
   AuthRoute: AuthRoute,
-  ContactRoute: ContactRoute,
   GenresRoute: GenresRoute,
   PoetryRoute: PoetryRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  SubmissionsRoute: SubmissionsRoute,
   ArticleSlugRoute: ArticleSlugRoute,
 }
 export const routeTree = rootRouteImport

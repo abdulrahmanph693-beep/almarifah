@@ -10,8 +10,8 @@ const nav = [
   { to: "/articles", label: "Articles & Essays" },
   { to: "/poetry", label: "Poetry" },
   { to: "/genres", label: "Seerah" },
+  { to: "/submissions", label: "Submissions" },
   { to: "/about", label: "About Us" },
-  { to: "/contact", label: "Contact / Submissions" },
 ] as const;
 
 export function SiteHeader() {
