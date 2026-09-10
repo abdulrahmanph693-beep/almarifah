@@ -5,7 +5,7 @@ import historyImg from "@/assets/feature-history.jpg";
 import cityImg from "@/assets/feature-city.jpg";
 import cultureImg from "@/assets/feature-culture.jpg";
 
-export type Section = "essays" | "poetry" | "short-stories" | "reviews" | "perspectives";
+export type Section = "essays" | "poetry" | "seerah" | "tawheed";
 
 export type Author = {
   slug: string;
@@ -43,9 +43,16 @@ export const sections: { id: Section; label: string; blurb: string }[] = [
     blurb: "Long-form analysis, argument, and scholarship.",
   },
   { id: "poetry", label: "Poetry", blurb: "Verse, translation, and the music of language." },
-  { id: "short-stories", label: "Short Stories", blurb: "Fiction in its most concentrated form." },
-  { id: "reviews", label: "Reviews", blurb: "Books, ideas, and cultural criticism." },
-  { id: "perspectives", label: "Perspectives", blurb: "Opinion, dialogue, and dissent." },
+  {
+    id: "seerah",
+    label: "Seerah",
+    blurb: "The life and example of the Prophet ﷺ, studied with care and love.",
+  },
+  {
+    id: "tawheed",
+    label: "Tawheed",
+    blurb: "On the oneness of God — the foundation of all knowledge.",
+  },
 ];
 
 export const categories = [
