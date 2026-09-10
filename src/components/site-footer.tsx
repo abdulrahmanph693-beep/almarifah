@@ -29,7 +29,7 @@ export function SiteFooter() {
             </li>
             <li>
               <Link to="/genres" className="hover:text-accent">
-                Literary Genres
+                Seerah &amp; Tawheed
               </Link>
             </li>
           </ul>
