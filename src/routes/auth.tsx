@@ -301,7 +301,7 @@ function AuthPage() {
             )}
           </p>
           <p className="mt-2 text-center text-xs text-muted-foreground">
-            <Link to="/contact" className="hover:text-accent">
+            <Link to="/submissions" className="hover:text-accent">
               Questions about submissions?
             </Link>
           </p>

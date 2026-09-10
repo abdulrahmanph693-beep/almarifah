@@ -18,6 +18,7 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as GenresRouteImport } from './routes/genres'
 import { Route as PoetryRouteImport } from './routes/poetry'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
+import { Route as SubmissionsRouteImport } from './routes/submissions'
 import { Route as AuthenticatedAdminRouteImport } from './routes/_authenticated/admin'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as ArticleSlugRouteImport } from './routes/article.$slug'
@@ -66,6 +67,11 @@ const ResetPasswordRoute = ResetPasswordRouteImport.update({
   path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SubmissionsRoute = SubmissionsRouteImport.update({
+  id: '/submissions',
+  path: '/submissions',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthenticatedAdminRoute = AuthenticatedAdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -91,6 +97,7 @@ export interface FileRoutesByFullPath {
   '/genres': typeof GenresRoute
   '/poetry': typeof PoetryRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/submissions': typeof SubmissionsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/article/$slug': typeof ArticleSlugRoute
@@ -104,6 +111,7 @@ export interface FileRoutesByTo {
   '/genres': typeof GenresRoute
   '/poetry': typeof PoetryRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/submissions': typeof SubmissionsRoute
   '/admin': typeof AuthenticatedAdminRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/article/$slug': typeof ArticleSlugRoute
@@ -119,6 +127,7 @@ export interface FileRoutesById {
   '/genres': typeof GenresRoute
   '/poetry': typeof PoetryRoute
   '/reset-password': typeof ResetPasswordRoute
+  '/submissions': typeof SubmissionsRoute
   '/_authenticated/admin': typeof AuthenticatedAdminRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/article/$slug': typeof ArticleSlugRoute
@@ -134,6 +143,7 @@ export interface FileRouteTypes {
     | '/genres'
     | '/poetry'
     | '/reset-password'
+    | '/submissions'
     | '/admin'
     | '/dashboard'
     | '/article/$slug'
@@ -147,6 +157,7 @@ export interface FileRouteTypes {
     | '/genres'
     | '/poetry'
     | '/reset-password'
+    | '/submissions'
     | '/admin'
     | '/dashboard'
     | '/article/$slug'
@@ -161,6 +172,7 @@ export interface FileRouteTypes {
     | '/genres'
     | '/poetry'
     | '/reset-password'
+    | '/submissions'
     | '/_authenticated/admin'
     | '/_authenticated/dashboard'
     | '/article/$slug'
@@ -176,6 +188,7 @@ export interface RootRouteChildren {
   GenresRoute: typeof GenresRoute
   PoetryRoute: typeof PoetryRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
+  SubmissionsRoute: typeof SubmissionsRoute
   ArticleSlugRoute: typeof ArticleSlugRoute
 }
 
@@ -244,6 +257,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/submissions': {
+      id: '/submissions'
+      path: '/submissions'
+      fullPath: '/submissions'
+      preLoaderRoute: typeof SubmissionsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/_authenticated/admin': {
       id: '/_authenticated/admin'
       path: '/admin'
@@ -291,6 +311,7 @@ const rootRouteChildren: RootRouteChildren = {
   GenresRoute: GenresRoute,
   PoetryRoute: PoetryRoute,
   ResetPasswordRoute: ResetPasswordRoute,
+  SubmissionsRoute: SubmissionsRoute,
   ArticleSlugRoute: ArticleSlugRoute,
 }
 export const routeTree = rootRouteImport
