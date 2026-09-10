@@ -14,7 +14,6 @@ import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as ArticlesRouteImport } from './routes/articles'
 import { Route as AuthRouteImport } from './routes/auth'
-import { Route as ContactRouteImport } from './routes/contact'
 import { Route as GenresRouteImport } from './routes/genres'
 import { Route as PoetryRouteImport } from './routes/poetry'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
@@ -45,11 +44,6 @@ const ArticlesRoute = ArticlesRouteImport.update({
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ContactRoute = ContactRouteImport.update({
-  id: '/contact',
-  path: '/contact',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GenresRoute = GenresRouteImport.update({
@@ -93,7 +87,6 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/articles': typeof ArticlesRoute
   '/auth': typeof AuthRoute
-  '/contact': typeof ContactRoute
   '/genres': typeof GenresRoute
   '/poetry': typeof PoetryRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -107,7 +100,6 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/articles': typeof ArticlesRoute
   '/auth': typeof AuthRoute
-  '/contact': typeof ContactRoute
   '/genres': typeof GenresRoute
   '/poetry': typeof PoetryRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -123,7 +115,6 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/articles': typeof ArticlesRoute
   '/auth': typeof AuthRoute
-  '/contact': typeof ContactRoute
   '/genres': typeof GenresRoute
   '/poetry': typeof PoetryRoute
   '/reset-password': typeof ResetPasswordRoute
@@ -139,7 +130,6 @@ export interface FileRouteTypes {
     | '/about'
     | '/articles'
     | '/auth'
-    | '/contact'
     | '/genres'
     | '/poetry'
     | '/reset-password'
@@ -153,7 +143,6 @@ export interface FileRouteTypes {
     | '/about'
     | '/articles'
     | '/auth'
-    | '/contact'
     | '/genres'
     | '/poetry'
     | '/reset-password'
@@ -168,7 +157,6 @@ export interface FileRouteTypes {
     | '/about'
     | '/articles'
     | '/auth'
-    | '/contact'
     | '/genres'
     | '/poetry'
     | '/reset-password'
@@ -184,7 +172,6 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   ArticlesRoute: typeof ArticlesRoute
   AuthRoute: typeof AuthRoute
-  ContactRoute: typeof ContactRoute
   GenresRoute: typeof GenresRoute
   PoetryRoute: typeof PoetryRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
@@ -227,13 +214,6 @@ declare module '@tanstack/react-router' {
       path: '/auth'
       fullPath: '/auth'
       preLoaderRoute: typeof AuthRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/contact': {
-      id: '/contact'
-      path: '/contact'
-      fullPath: '/contact'
-      preLoaderRoute: typeof ContactRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/genres': {
@@ -307,7 +287,6 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   ArticlesRoute: ArticlesRoute,
   AuthRoute: AuthRoute,
-  ContactRoute: ContactRoute,
   GenresRoute: GenresRoute,
   PoetryRoute: PoetryRoute,
   ResetPasswordRoute: ResetPasswordRoute,
