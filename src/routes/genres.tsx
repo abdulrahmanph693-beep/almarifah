@@ -11,14 +11,14 @@ export const Route = createFileRoute("/genres")({
   },
   head: () => ({
     meta: [
-      { title: "Literary Genres — Almarifah" },
+      { title: "Seerah & Tawheed — Almarifah" },
       {
         name: "description",
         content:
-          "Short stories, reviews and perspectives: fiction and criticism from the Almarifah contributors.",
+          "Seerah and Tawheed: the life of the Prophet ﷺ and the oneness of God, from the Almarifah contributors.",
       },
-      { property: "og:title", content: "Literary Genres — Almarifah" },
-      { property: "og:description", content: "Short stories, reviews and perspectives." },
+      { property: "og:title", content: "Seerah & Tawheed — Almarifah" },
+      { property: "og:description", content: "Seerah and Tawheed: the life of the Prophet and the oneness of God." },
       { property: "og:url", content: "/genres" },
     ],
     links: [{ rel: "canonical", href: "/genres" }],
@@ -26,13 +26,13 @@ export const Route = createFileRoute("/genres")({
   component: GenresPage,
 });
 
-const genreIds: Section[] = ["short-stories", "reviews", "perspectives"];
+const genreIds: Section[] = ["seerah", "tawheed"];
 
 function GenresPage() {
   const { data: workRows = [] } = useSuspenseQuery(publishedWorksOptions);
   const workPosts = worksToPosts(workRows);
   const worksMode = workPosts.length > 0;
-  const [active, setActive] = useState<Section>("short-stories");
+  const [active, setActive] = useState<Section>("seerah");
   const meta = sections.find((s) => s.id === active)!;
   const posts = worksMode
     ? workPosts.filter((p) => p.section !== "poetry")
@@ -41,10 +41,11 @@ function GenresPage() {
   return (
     <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6">
       <header className="rule-accent mb-10 max-w-2xl">
-        <span className="eyebrow">Forms</span>
-        <h1 className="mt-3 font-serif text-4xl sm:text-5xl">Literary Genres</h1>
+        <span className="eyebrow">Foundations</span>
+        <h1 className="mt-3 font-serif text-4xl sm:text-5xl">Seerah &amp; Tawheed</h1>
         <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-          Fiction, criticism and opinion — each form with its own demands on the reader.
+          The life of the Prophet ﷺ and the oneness of God — the foundations upon which all
+          knowledge rests.
         </p>
       </header>
 

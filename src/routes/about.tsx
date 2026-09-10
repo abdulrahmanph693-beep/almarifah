@@ -37,8 +37,8 @@ function AboutPage() {
           something up.
         </p>
         <p>
-          We publish essays and long-form analysis, poetry and translation, short fiction, reviews,
-          and perspectives. Our subjects are philosophy, literature, culture, history and language —
+          We publish essays and long-form analysis, poetry and translation, and studies in Seerah
+          and Tawheed. Our subjects are philosophy, literature, culture, history and language —
           but the through-line is method rather than topic. We would rather publish one careful piece
           than five quick ones.
         </p>

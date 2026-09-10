@@ -84,7 +84,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       {
         name: "description",
         content:
-          "The English edition of Ainul-Haqq: essays, poetry, short stories, reviews and perspectives for slow, serious reading.",
+          "The English edition of Ainul-Haqq: essays, poetry, Seerah and Tawheed for slow, serious reading.",
       },
       { property: "og:site_name", content: "Almarifah" },
       { property: "og:type", content: "website" },

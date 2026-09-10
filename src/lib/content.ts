@@ -5,7 +5,7 @@ import historyImg from "@/assets/feature-history.jpg";
 import cityImg from "@/assets/feature-city.jpg";
 import cultureImg from "@/assets/feature-culture.jpg";
 
-export type Section = "essays" | "poetry" | "short-stories" | "reviews" | "perspectives";
+export type Section = "essays" | "poetry" | "seerah" | "tawheed";
 
 export type Author = {
   slug: string;
@@ -43,9 +43,16 @@ export const sections: { id: Section; label: string; blurb: string }[] = [
     blurb: "Long-form analysis, argument, and scholarship.",
   },
   { id: "poetry", label: "Poetry", blurb: "Verse, translation, and the music of language." },
-  { id: "short-stories", label: "Short Stories", blurb: "Fiction in its most concentrated form." },
-  { id: "reviews", label: "Reviews", blurb: "Books, ideas, and cultural criticism." },
-  { id: "perspectives", label: "Perspectives", blurb: "Opinion, dialogue, and dissent." },
+  {
+    id: "seerah",
+    label: "Seerah",
+    blurb: "The life and example of the Prophet ﷺ, studied with care and love.",
+  },
+  {
+    id: "tawheed",
+    label: "Tawheed",
+    blurb: "On the oneness of God — the foundation of all knowledge.",
+  },
 ];
 
 export const categories = [
@@ -204,7 +211,7 @@ I keep meaning to stay.`,
     subtitle: "Contemporary fiction is learning to write in fragments. Is that a loss?",
     excerpt:
       "A survey of the fractured novel — its pleasures, its evasions, and the older ambitions it quietly abandons.",
-    section: "reviews",
+    section: "seerah",
     category: "Literature",
     tags: ["Fiction", "Criticism", "Modern Essays"],
     authorSlug: "sara-mansour",
@@ -221,7 +228,7 @@ I keep meaning to stay.`,
     subtitle: "A short story.",
     excerpt:
       "He was hired to draw coastlines he had never seen, and discovered that every map is an argument about what deserves a name.",
-    section: "short-stories",
+    section: "seerah",
     category: "Literature",
     tags: ["Fiction", "Memory"],
     authorSlug: "sara-mansour",
@@ -237,7 +244,7 @@ I keep meaning to stay.`,
     subtitle: "What gets lost when every argument must fit in a paragraph.",
     excerpt:
       "Compression is a service until it becomes a worldview. On the quiet violence of the executive summary.",
-    section: "perspectives",
+    section: "tawheed",
     category: "Modern Essays",
     tags: ["Media", "Language", "Criticism"],
     authorSlug: "layla-nasser",
@@ -311,7 +318,7 @@ we are, briefly, neighbours.`,
     subtitle: "Why some books should resist you.",
     excerpt:
       "Difficulty is not a failure of communication. Sometimes it is the only honest shape a thought can take.",
-    section: "perspectives",
+    section: "tawheed",
     category: "Philosophy",
     tags: ["Reading", "Criticism", "Philosophy"],
     authorSlug: "layla-nasser",
@@ -343,7 +350,7 @@ we are, briefly, neighbours.`,
     subtitle: "A sweeping history that trusts its reader.",
     excerpt:
       "Rare is the history book that resists the urge to conclude. This one leaves the argument open, and is stronger for it.",
-    section: "reviews",
+    section: "seerah",
     category: "History",
     tags: ["Review", "History"],
     authorSlug: "sara-mansour",
@@ -359,7 +366,7 @@ we are, briefly, neighbours.`,
     subtitle: "A short story about a library that refuses to close.",
     excerpt:
       "Every night she shelved books no one had requested in eleven years, and every night the shelves were slightly fuller.",
-    section: "short-stories",
+    section: "seerah",
     category: "Literature",
     tags: ["Fiction", "Libraries"],
     authorSlug: "sara-mansour",
