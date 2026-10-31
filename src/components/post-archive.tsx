@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { ArticleCard } from "@/components/article-card";
-import { categories, type Post } from "@/lib/content";
+import { type Post } from "@/lib/content";
+import { useCategories } from "@/lib/categories";
 
 const PAGE = 6;
 
@@ -8,6 +9,12 @@ export function PostArchive({ posts }: { posts: Post[] }) {
   const [category, setCategory] = useState<string>("All");
   const [tag, setTag] = useState<string | null>(null);
   const [visible, setVisible] = useState(PAGE);
+  const { names } = useCategories();
+  const categories = useMemo(() => {
+    const used = new Set(posts.map((p) => p.category));
+    const extra = [...used].filter((c) => !names.includes(c));
+    return [...names.filter((c) => used.has(c) || used.size === 0), ...extra];
+  }, [posts, names]);
 
   const allTags = useMemo(
     () => Array.from(new Set(posts.flatMap((p) => p.tags))).sort(),

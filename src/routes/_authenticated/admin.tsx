@@ -20,6 +20,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { SectionManager } from "@/components/section-manager";
+import { useCategories } from "@/lib/categories";
 import { CoverImagePicker } from "@/components/cover-image-picker";
 import {
   Select,
@@ -31,7 +33,6 @@ import {
 import {
   statusClass,
   statusLabel,
-  submissionCategories,
   type Submission,
   type SubmissionKind,
   type SubmissionStatus,
@@ -79,6 +80,7 @@ function AdminDesk() {
   const [draft, setDraft] = useState(emptyDraft);
   const [busy, setBusy] = useState(false);
   const [edit, setEdit] = useState<EditState | null>(null);
+  const { names: categoryNames } = useCategories();
 
   async function createOwnWork(publishNow: boolean) {
     const userId = session?.user.id;
@@ -239,7 +241,12 @@ function AdminDesk() {
             Published ({byStatus("published").length})
           </TabsTrigger>
           <TabsTrigger value="rejected">Returned ({byStatus("rejected").length})</TabsTrigger>
+          <TabsTrigger value="sections">Sections</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="sections" className="mt-8">
+          <SectionManager />
+        </TabsContent>
 
         <TabsContent value="write" className="mt-8">
           <div className="rule-accent mb-6">
@@ -295,7 +302,7 @@ function AdminDesk() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    {submissionCategories.map((c) => (
+                    {categoryNames.map((c) => (
                       <SelectItem key={c} value={c}>
                         {c}
                       </SelectItem>
