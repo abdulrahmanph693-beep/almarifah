@@ -10,13 +10,13 @@ export const Route = createFileRoute("/articles")({
   },
   head: () => ({
     meta: [
-      { title: "Articles & Essays — Almarifah" },
+      { title: "Articles & Essays — Almuasir" },
       {
         name: "description",
         content:
           "Long-form essays and analysis on philosophy, history, literature and culture, filtered by category and tag.",
       },
-      { property: "og:title", content: "Articles & Essays — Almarifah" },
+      { property: "og:title", content: "Articles & Essays — Almuasir" },
       {
         property: "og:description",
         content: "Long-form essays and analysis on philosophy, history, literature and culture.",

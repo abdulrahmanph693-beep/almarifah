@@ -9,13 +9,13 @@ export const Route = createFileRoute("/poetry")({
   },
   head: () => ({
     meta: [
-      { title: "Poetry — Almarifah" },
+      { title: "Poetry — Almuasir" },
       {
         name: "description",
         content:
-          "Verse, translation and the music of language: the Almarifah Poetry Corner, formatted to preserve every line break and stanza.",
+          "Verse, translation and the music of language: the Almuasir Poetry Corner, formatted to preserve every line break and stanza.",
       },
-      { property: "og:title", content: "Poetry — Almarifah" },
+      { property: "og:title", content: "Poetry — Almuasir" },
       { property: "og:description", content: "Verse, translation and the music of language." },
       { property: "og:url", content: "/poetry" },
     ],

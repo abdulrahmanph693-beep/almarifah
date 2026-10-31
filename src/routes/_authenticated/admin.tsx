@@ -41,13 +41,13 @@ import {
 export const Route = createFileRoute("/_authenticated/admin")({
   head: () => ({
     meta: [
-      { title: "Editor desk — Almarifah" },
+      { title: "Editor desk — Almuasir" },
       {
         name: "description",
         content:
-          "Review, edit, approve, publish or return submissions sent to Almarifah by contributors.",
+          "Review, edit, approve, publish or return submissions sent to Almuasir by contributors.",
       },
-      { property: "og:title", content: "Editor desk — Almarifah" },
+      { property: "og:title", content: "Editor desk — Almuasir" },
       { property: "og:description", content: "Editorial review and publishing controls." },
     ],
   }),
@@ -229,7 +229,7 @@ function AdminDesk() {
       <span className="eyebrow">Editorial</span>
       <h1 className="mt-2 font-serif text-3xl sm:text-4xl">Editor desk</h1>
       <p className="mt-2 text-sm text-muted-foreground">
-        Read, edit, approve, publish or return every work sent to Almarifah.
+        Read, edit, approve, publish or return every work sent to Almuasir.
       </p>
 
       <Tabs defaultValue="pending" className="mt-10">
