@@ -27,14 +27,14 @@ import {
 export const Route = createFileRoute("/_authenticated/dashboard")({
   head: () => ({
     meta: [
-      { title: "Your contributor profile — Almarifah" },
+      { title: "Your contributor profile — Almuasir" },
       {
         name: "description",
         content:
-          "Manage your Almarifah contributor profile and track which of your works are pending, approved, published or need changes.",
+          "Manage your Almuasir contributor profile and track which of your works are pending, approved, published or need changes.",
       },
-      { property: "og:title", content: "Your contributor profile — Almarifah" },
-      { property: "og:description", content: "Track your submissions to Almarifah." },
+      { property: "og:title", content: "Your contributor profile — Almuasir" },
+      { property: "og:description", content: "Track your submissions to Almuasir." },
     ],
   }),
   component: Dashboard,

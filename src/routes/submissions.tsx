@@ -6,14 +6,14 @@ import { useAuth } from "@/hooks/use-auth";
 export const Route = createFileRoute("/submissions")({
   head: () => ({
     meta: [
-      { title: "Submissions — Almarifah" },
+      { title: "Submissions — Almuasir" },
       {
         name: "description",
         content:
-          "Submit an essay, poem, or story to Almarifah. Read the submission guidelines and share your work with the editors.",
+          "Submit an essay, poem, or story to Almuasir. Read the submission guidelines and share your work with the editors.",
       },
-      { property: "og:title", content: "Submissions — Almarifah" },
-      { property: "og:description", content: "Submit an essay or poem to Almarifah." },
+      { property: "og:title", content: "Submissions — Almuasir" },
+      { property: "og:description", content: "Submit an essay or poem to Almuasir." },
       { property: "og:url", content: "/submissions" },
     ],
     links: [{ rel: "canonical", href: "/submissions" }],

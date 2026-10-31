@@ -32,14 +32,14 @@ export const Route = createFileRoute("/article/$slug")({
   head: ({ params, loaderData }) => {
     if (!loaderData) {
       return {
-        meta: [{ title: "Unavailable — Almarifah" }, { name: "robots", content: "noindex" }],
+        meta: [{ title: "Unavailable — Almuasir" }, { name: "robots", content: "noindex" }],
       };
     }
     const { post } = loaderData;
     const author = resolveAuthor(post);
     return {
       meta: [
-        { title: `${post.title} — Almarifah` },
+        { title: `${post.title} — Almuasir` },
         { name: "description", content: post.excerpt },
         { name: "author", content: author.name },
         { property: "og:title", content: post.title },
@@ -61,7 +61,7 @@ export const Route = createFileRoute("/article/$slug")({
             keywords: post.tags.join(", "),
             articleSection: sectionLabel(post.section),
             author: { "@type": "Person", name: author.name },
-            publisher: { "@type": "Organization", name: "Almarifah" },
+            publisher: { "@type": "Organization", name: "Almuasir" },
           }),
         },
       ],

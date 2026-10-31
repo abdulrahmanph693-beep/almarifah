@@ -11,13 +11,13 @@ export const Route = createFileRoute("/genres")({
   },
   head: () => ({
     meta: [
-      { title: "Seerah & Tawheed — Almarifah" },
+      { title: "Seerah & Tawheed — Almuasir" },
       {
         name: "description",
         content:
-          "Seerah and Tawheed: the life of the Prophet ﷺ and the oneness of God, from the Almarifah contributors.",
+          "Seerah and Tawheed: the life of the Prophet ﷺ and the oneness of God, from the Almuasir contributors.",
       },
-      { property: "og:title", content: "Seerah & Tawheed — Almarifah" },
+      { property: "og:title", content: "Seerah & Tawheed — Almuasir" },
       { property: "og:description", content: "Seerah and Tawheed: the life of the Prophet and the oneness of God." },
       { property: "og:url", content: "/genres" },
     ],

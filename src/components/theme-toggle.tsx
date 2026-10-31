@@ -5,7 +5,7 @@ export function ThemeToggle({ className = "" }: { className?: string }) {
   const [dark, setDark] = useState(false);
 
   useEffect(() => {
-    const stored = localStorage.getItem("almarifa-theme");
+    const stored = localStorage.getItem("almuasir-theme");
     const prefers =
       stored === "dark" ||
       (!stored && window.matchMedia("(prefers-color-scheme: dark)").matches);
@@ -17,7 +17,7 @@ export function ThemeToggle({ className = "" }: { className?: string }) {
     const next = !dark;
     setDark(next);
     document.documentElement.classList.toggle("dark", next);
-    localStorage.setItem("almarifa-theme", next ? "dark" : "light");
+    localStorage.setItem("almuasir-theme", next ? "dark" : "light");
   }
 
   return (

@@ -60,7 +60,7 @@ export const fetchPublishedWorks = createServerFn({ method: "GET" }).handler(asy
     cover_image: s.cover_image,
     published_at: s.published_at,
     created_at: s.created_at,
-    author_name: profiles.get(s.author_id)?.full_name || "Almarifah Contributor",
+    author_name: profiles.get(s.author_id)?.full_name || "Almuasir Contributor",
     author_bio: profiles.get(s.author_id)?.bio || "",
   }));
 });
