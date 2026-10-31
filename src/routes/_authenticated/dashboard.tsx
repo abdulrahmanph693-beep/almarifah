@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
+import { useCategories } from "@/lib/categories";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,7 +19,6 @@ import {
 import {
   statusClass,
   statusLabel,
-  submissionCategories,
   type Submission,
   type SubmissionKind,
   type SubmissionStatus,
@@ -60,6 +60,7 @@ function Dashboard() {
   const [draft, setDraft] = useState(emptyDraft);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const { names: categoryNames } = useCategories();
 
   const profileQuery = useQuery({
     queryKey: ["profile", userId],
@@ -237,7 +238,7 @@ function Dashboard() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      {submissionCategories.map((c) => (
+                      {categoryNames.map((c) => (
                         <SelectItem key={c} value={c}>
                           {c}
                         </SelectItem>
