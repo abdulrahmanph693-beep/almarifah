@@ -14,7 +14,6 @@ import {
 } from "@/lib/content";
 import {
   deriveContributors,
-  poemPreview,
   publishedWorksOptions,
   worksToPosts,
 } from "@/lib/works";
@@ -56,9 +55,6 @@ function Home() {
     ? workPosts.filter((p) => p.section === "essays").slice(0, 2)
     : postsBySection("essays").slice(0, 2);
   const editors = worksMode ? workPosts.slice(4, 7) : posts.filter((p) => p.editorsChoice);
-  const poems = worksMode
-    ? workPosts.filter((p) => p.section === "poetry")
-    : postsBySection("poetry");
   const leadAuthor = resolveAuthor(lead);
 
   return (
@@ -192,46 +188,6 @@ function Home() {
           <Newsletter />
         </aside>
       </div>
-
-      {/* Poetry corner */}
-      {poems.length > 0 && (
-        <section
-          aria-labelledby="poetry-heading"
-          className="ambient-poetry border-y border-border"
-        >
-          <div className="mx-auto max-w-4xl px-4 py-20 text-center sm:px-6">
-            <span className="eyebrow">Poetry Corner</span>
-            <h2 id="poetry-heading" className="mt-3 font-serif text-3xl sm:text-4xl">
-              Where the line break does the thinking
-            </h2>
-            <div className="mt-12 space-y-16">
-              {poems.map((poem) => (
-                <article key={poem.slug}>
-                  <p className="poem mx-auto max-w-xl text-foreground">{poemPreview(poem)}</p>
-                  <h3 className="mt-8 font-serif text-xl">
-                    <Link
-                      to="/article/$slug"
-                      params={{ slug: poem.slug }}
-                      className="hover:text-accent"
-                    >
-                      {poem.title}
-                    </Link>
-                  </h3>
-                  <p className="mt-1 text-xs uppercase tracking-[0.16em] text-muted-foreground">
-                    {resolveAuthor(poem).name}
-                  </p>
-                </article>
-              ))}
-            </div>
-            <Link
-              to="/poetry"
-              className="mt-14 inline-flex items-center rounded-md bg-accent px-5 py-2.5 text-sm font-medium text-accent-foreground transition-opacity hover:opacity-90"
-            >
-              Enter the Poetry Corner
-            </Link>
-          </div>
-        </section>
-      )}
     </>
   );
 }
