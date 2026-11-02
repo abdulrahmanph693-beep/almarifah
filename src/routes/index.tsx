@@ -1,9 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { Clock } from "lucide-react";
-import { ArticleCard } from "@/components/article-card";
-import { Newsletter } from "@/components/newsletter";
-import { AuthorSpotlight, MostRead } from "@/components/sidebar-widgets";
 import {
   formatDate,
   posts,
@@ -14,7 +10,6 @@ import {
 } from "@/lib/content";
 import {
   deriveContributors,
-  poemPreview,
   publishedWorksOptions,
   worksToPosts,
 } from "@/lib/works";
