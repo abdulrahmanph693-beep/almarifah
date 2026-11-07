@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -23,6 +24,7 @@ import {
 import { SectionManager } from "@/components/section-manager";
 import { useCategories } from "@/lib/categories";
 import { CoverImagePicker } from "@/components/cover-image-picker";
+import { generateCoverImage } from "@/lib/cover-image.functions";
 import {
   Select,
   SelectContent,
@@ -73,6 +75,7 @@ type EditState = {
 };
 
 function AdminDesk() {
+  const generateCover = useServerFn(generateCoverImage);
   const { isAdmin, loading, session } = useAuth();
   const queryClient = useQueryClient();
   const [openId, setOpenId] = useState<string | null>(null);
@@ -324,6 +327,19 @@ function AdminDesk() {
               id="admin-cover"
               value={draft.cover_image}
               onChange={(v) => setDraft({ ...draft, cover_image: v })}
+              onGenerate={async () => {
+                const result = await generateCover({
+                  data: {
+                    title: draft.title,
+                    subtitle: draft.subtitle,
+                    category: draft.category,
+                    kind: draft.kind,
+                    excerpt: draft.excerpt,
+                    body: draft.body,
+                  },
+                });
+                return result.imageData;
+              }}
             />
             <div className="space-y-2">
               <Label htmlFor="admin-body">Full text</Label>
@@ -450,6 +466,19 @@ function AdminDesk() {
                       id={`c-${work.id}`}
                       value={edit.cover_image}
                       onChange={(v) => setEdit({ ...edit, cover_image: v })}
+                      onGenerate={async () => {
+                        const result = await generateCover({
+                          data: {
+                            title: edit.title,
+                            subtitle: edit.subtitle,
+                            category: work.category,
+                            kind: work.kind,
+                            excerpt: edit.excerpt,
+                            body: edit.body,
+                          },
+                        });
+                        return result.imageData;
+                      }}
                     />
                     <div className="space-y-2">
                       <Label htmlFor={`e-${work.id}`}>Short summary</Label>

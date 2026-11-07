@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Generate editorial cover images only through an authenticated admin-only server function; save accepted crops in the existing `submissions.cover_image` field to preserve the current public-work data flow.
