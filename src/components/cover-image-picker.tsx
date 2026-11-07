@@ -1,6 +1,6 @@
 import { useCallback, useRef, useState } from "react";
 import Cropper, { type Area } from "react-easy-crop";
-import { ImagePlus, Trash2 } from "lucide-react";
+import { ImagePlus, LoaderCircle, Sparkles, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
@@ -47,15 +47,23 @@ type Props = {
   onChange: (value: string) => void;
   label?: string;
   id?: string;
+  onGenerate?: () => Promise<string>;
 };
 
-export function CoverImagePicker({ value, onChange, label = "Featured image", id }: Props) {
+export function CoverImagePicker({
+  value,
+  onChange,
+  label = "Featured image",
+  id,
+  onGenerate,
+}: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [source, setSource] = useState<string | null>(null);
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [area, setArea] = useState<Area | null>(null);
   const [saving, setSaving] = useState(false);
+  const [generating, setGenerating] = useState(false);
 
   const onCropComplete = useCallback((_: Area, pixels: Area) => setArea(pixels), []);
 
@@ -91,6 +99,20 @@ export function CoverImagePicker({ value, onChange, label = "Featured image", id
     }
   }
 
+  async function generateImage() {
+    if (!onGenerate) return;
+    setGenerating(true);
+    try {
+      setSource(await onGenerate());
+      setCrop({ x: 0, y: 0 });
+      setZoom(1);
+    } catch {
+      toast.error("Could not generate a cover image. Please try again.");
+    } finally {
+      setGenerating(false);
+    }
+  }
+
   return (
     <div className="space-y-2">
       <Label htmlFor={id}>{label}</Label>
@@ -112,6 +134,22 @@ export function CoverImagePicker({ value, onChange, label = "Featured image", id
           <ImagePlus className="mr-2 h-4 w-4" aria-hidden />
           {value ? "Replace image" : "Upload image"}
         </Button>
+        {onGenerate && (
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={generateImage}
+            disabled={generating || saving}
+          >
+            {generating ? (
+              <LoaderCircle className="mr-2 h-4 w-4 animate-spin" aria-hidden />
+            ) : (
+              <Sparkles className="mr-2 h-4 w-4" aria-hidden />
+            )}
+            {generating ? "Creating image…" : "Generate with AI"}
+          </Button>
+        )}
         {value && (
           <Button type="button" variant="ghost" size="sm" onClick={() => onChange("")}>
             <Trash2 className="mr-2 h-4 w-4" aria-hidden />
