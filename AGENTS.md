@@ -10,3 +10,4 @@
 <!-- LOVABLE:END -->
 
 - Generate editorial cover images only through an authenticated admin-only server function; save accepted crops in the existing `submissions.cover_image` field to preserve the current public-work data flow.
+- Account listing and changes use authenticated server functions with a fresh server-side admin-role check before privileged Auth or role operations, so browser state cannot grant account privileges.

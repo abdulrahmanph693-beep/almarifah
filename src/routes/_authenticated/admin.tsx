@@ -3,6 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
+import { Search, ShieldCheck, UserRound } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
@@ -25,6 +26,11 @@ import { SectionManager } from "@/components/section-manager";
 import { useCategories } from "@/lib/categories";
 import { CoverImagePicker } from "@/components/cover-image-picker";
 import { generateCoverImage } from "@/lib/cover-image.functions";
+import {
+  deleteManagedAccount,
+  listManagedAccounts,
+  updateManagedAccount,
+} from "@/lib/account-management.functions";
 import {
   Select,
   SelectContent,
@@ -76,12 +82,17 @@ type EditState = {
 
 function AdminDesk() {
   const generateCover = useServerFn(generateCoverImage);
+  const fetchAccounts = useServerFn(listManagedAccounts);
+  const updateAccount = useServerFn(updateManagedAccount);
+  const deleteAccount = useServerFn(deleteManagedAccount);
   const { isAdmin, loading, session } = useAuth();
   const queryClient = useQueryClient();
   const [openId, setOpenId] = useState<string | null>(null);
   const [note, setNote] = useState("");
   const [draft, setDraft] = useState(emptyDraft);
   const [busy, setBusy] = useState(false);
+  const [accountSearch, setAccountSearch] = useState("");
+  const [accountBusyId, setAccountBusyId] = useState<string | null>(null);
   const [edit, setEdit] = useState<EditState | null>(null);
   const { names: categoryNames } = useCategories();
 
@@ -144,6 +155,12 @@ function AdminDesk() {
     },
   });
 
+  const accountsQuery = useQuery({
+    queryKey: ["managed-accounts"],
+    enabled: isAdmin,
+    queryFn: () => fetchAccounts(),
+  });
+
   const authorName = useMemo(() => {
     const map = new Map<string, string>();
     for (const p of authorsQuery.data ?? []) map.set(p.id, p.full_name || p.email);
@@ -151,7 +168,41 @@ function AdminDesk() {
   }, [authorsQuery.data]);
 
   const works = worksQuery.data ?? [];
+  const accounts = (accountsQuery.data ?? []).filter((account) => {
+    const term = accountSearch.trim().toLowerCase();
+    return !term || `${account.fullName} ${account.email}`.toLowerCase().includes(term);
+  });
   const byStatus = (s: SubmissionStatus) => works.filter((w) => w.status === s);
+
+  async function changeAccount(userId: string, action: "admin" | "disabled", enabled: boolean) {
+    setAccountBusyId(userId);
+    try {
+      await updateAccount({ data: { userId, action, enabled } });
+      await queryClient.invalidateQueries({ queryKey: ["managed-accounts"] });
+      toast.success(action === "admin"
+        ? enabled ? "Administrator access granted." : "Administrator access removed."
+        : enabled ? "Account access restored." : "Account sign-in disabled.");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not update this account.");
+    } finally {
+      setAccountBusyId(null);
+    }
+  }
+
+  async function removeAccount(userId: string) {
+    setAccountBusyId(userId);
+    try {
+      await deleteAccount({ data: { userId } });
+      await queryClient.invalidateQueries({ queryKey: ["managed-accounts"] });
+      await queryClient.invalidateQueries({ queryKey: ["all-profiles"] });
+      await queryClient.invalidateQueries({ queryKey: ["all-submissions"] });
+      toast.success("Account and submitted works permanently deleted.");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Could not delete this account.");
+    } finally {
+      setAccountBusyId(null);
+    }
+  }
 
   async function setStatus(work: Submission, status: SubmissionStatus) {
     const patch = {
@@ -245,7 +296,121 @@ function AdminDesk() {
           </TabsTrigger>
           <TabsTrigger value="rejected">Returned ({byStatus("rejected").length})</TabsTrigger>
           <TabsTrigger value="sections">Sections</TabsTrigger>
+          <TabsTrigger value="accounts">Accounts ({accountsQuery.data?.length ?? 0})</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="accounts" className="mt-8">
+          <div className="rule-accent mb-6">
+            <h2 className="font-serif text-2xl">Website accounts</h2>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Review account details, access roles, and sign-in status.
+            </p>
+          </div>
+
+          <div className="relative mb-5 max-w-md">
+            <Search aria-hidden="true" className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              aria-label="Search accounts"
+              placeholder="Search name or email"
+              className="pl-9"
+              value={accountSearch}
+              onChange={(event) => setAccountSearch(event.target.value)}
+            />
+          </div>
+
+          {accountsQuery.isLoading ? (
+            <p className="text-sm text-muted-foreground">Loading accounts…</p>
+          ) : accountsQuery.isError ? (
+            <div className="space-y-3" role="alert">
+              <p className="text-sm text-destructive">Could not load accounts.</p>
+              <Button variant="outline" size="sm" onClick={() => accountsQuery.refetch()}>Try again</Button>
+            </div>
+          ) : accounts.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              {accountSearch ? "No accounts match your search." : "No accounts found."}
+            </p>
+          ) : (
+            <div className="divide-y divide-border border-y border-border">
+              {accounts.map((account) => {
+                const isSelf = account.id === session?.user.id;
+                const isAdminAccount = account.roles.includes("admin");
+                const disabled = Boolean(account.bannedUntil && Date.parse(account.bannedUntil) > Date.now());
+                const working = accountBusyId === account.id;
+                return (
+                  <article key={account.id} className="grid gap-4 py-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-center">
+                    <div className="min-w-0">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h3 className="font-serif text-lg">{account.fullName || "Unnamed account"}</h3>
+                        {isSelf && <span className="text-xs text-muted-foreground">You</span>}
+                      </div>
+                      <p className="mt-1 break-all text-sm text-muted-foreground">{account.email || "No email"}</p>
+                      <dl className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted-foreground">
+                        <div className="flex gap-1"><dt>Joined</dt><dd>{new Date(account.createdAt).toLocaleDateString()}</dd></div>
+                        <div className="flex gap-1"><dt>Last sign-in</dt><dd>{account.lastSignInAt ? new Date(account.lastSignInAt).toLocaleDateString() : "Never"}</dd></div>
+                        <div className="flex items-center gap-1">
+                          <dt>Access</dt>
+                          <dd className={disabled ? "text-destructive" : "text-foreground"}>{disabled ? "Disabled" : "Active"}</dd>
+                        </div>
+                      </dl>
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {account.roles.map((role) => (
+                          <span key={role} className="inline-flex items-center gap-1 rounded-full border border-border px-2.5 py-1 text-xs capitalize">
+                            {role === "admin" ? <ShieldCheck aria-hidden="true" className="size-3.5" /> : <UserRound aria-hidden="true" className="size-3.5" />}
+                            {role}
+                          </span>
+                        ))}
+                        {account.roles.length === 0 && <span className="text-xs text-muted-foreground">No assigned role</span>}
+                      </div>
+                    </div>
+
+                    <div className="flex flex-wrap gap-2 lg:justify-end">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        disabled={working || isSelf}
+                        onClick={() => changeAccount(account.id, "admin", !isAdminAccount)}
+                      >
+                        {isAdminAccount ? "Remove admin" : "Make admin"}
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        disabled={working || isSelf}
+                        onClick={() => changeAccount(account.id, "disabled", disabled)}
+                      >
+                        {disabled ? "Restore access" : "Disable sign-in"}
+                      </Button>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button size="sm" variant="destructive" disabled={working || isSelf}>
+                            Delete account
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete {account.fullName || account.email}?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This permanently deletes their account, profile, and submitted works. This cannot be undone.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction
+                              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                              onClick={() => void removeAccount(account.id)}
+                            >
+                              Delete permanently
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          )}
+        </TabsContent>
 
         <TabsContent value="sections" className="mt-8">
           <SectionManager />
