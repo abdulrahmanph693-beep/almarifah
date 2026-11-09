@@ -1,13 +1,13 @@
 import { createServerFn } from "@tanstack/react-start";
+import type { SupabaseClient } from "@supabase/supabase-js";
+import type { Database } from "@/integrations/supabase/types";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
+import { assertNotLastAdmin, assertNotSelf } from "@/lib/account-management.policy";
 
 type AccountAction = "admin" | "disabled";
 
-async function requireAdmin(supabase: Parameters<typeof requireSupabaseAuth>[0] extends never ? never : unknown, userId: string) {
-  const client = supabase as {
-    rpc: (name: "has_role", args: { _user_id: string; _role: "admin" }) => Promise<{ data: boolean | null; error: { message: string } | null }>;
-  };
-  const { data, error } = await client.rpc("has_role", { _user_id: userId, _role: "admin" });
+async function requireAdmin(supabase: SupabaseClient<Database>, userId: string) {
+  const { data, error } = await supabase.rpc("has_role", { _user_id: userId, _role: "admin" });
   if (error || !data) throw new Error("Only an administrator can manage accounts.");
 }
 
@@ -17,14 +17,7 @@ export const listManagedAccounts = createServerFn({ method: "GET" })
     await requireAdmin(context.supabase, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const pageSize = 1000;
-    const users = [] as Array<{
-      id: string;
-      email?: string;
-      created_at: string;
-      last_sign_in_at?: string;
-      email_confirmed_at?: string;
-      banned_until?: string;
-    }>;
+    const users = [] as Awaited<ReturnType<typeof supabaseAdmin.auth.admin.listUsers>> extends { data: { users: (infer U)[] } } ? U[] : never;
 
     for (let page = 1; page <= 100; page += 1) {
       const { data, error } = await supabaseAdmin.auth.admin.listUsers({ page, perPage: pageSize });
@@ -67,7 +60,7 @@ export const updateManagedAccount = createServerFn({ method: "POST" })
       throw new Error("Choose a valid account.");
     }
     await requireAdmin(context.supabase, context.userId);
-    if (data.userId === context.userId) throw new Error("You cannot change your own administrator access or sign-in status.");
+    assertNotSelf(context.userId, data.userId, data.action === "admin" ? "administrator access" : "sign-in status");
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     if (data.action === "admin") {
@@ -82,7 +75,7 @@ export const updateManagedAccount = createServerFn({ method: "POST" })
           .select("user_id")
           .eq("role", "admin");
         if (countError) throw new Error("Could not verify administrator access.");
-        if ((admins ?? []).length <= 1) throw new Error("The last administrator cannot be removed.");
+        assertNotLastAdmin(true, (admins ?? []).length, "removed");
         const { error } = await supabaseAdmin
           .from("user_roles")
           .delete()
@@ -104,7 +97,7 @@ export const updateManagedAccount = createServerFn({ method: "POST" })
             .select("user_id")
             .eq("role", "admin");
           if (countError) throw new Error("Could not verify administrator access.");
-          if ((admins ?? []).length <= 1) throw new Error("The last administrator cannot be disabled.");
+          assertNotLastAdmin(true, (admins ?? []).length, "disabled");
         }
       }
 
@@ -125,7 +118,7 @@ export const deleteManagedAccount = createServerFn({ method: "POST" })
       throw new Error("Choose a valid account.");
     }
     await requireAdmin(context.supabase, context.userId);
-    if (data.userId === context.userId) throw new Error("You cannot delete your own account here.");
+    assertNotSelf(context.userId, data.userId, "delete this account");
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: targetRoles, error: roleError } = await supabaseAdmin
@@ -140,7 +133,7 @@ export const deleteManagedAccount = createServerFn({ method: "POST" })
         .select("user_id")
         .eq("role", "admin");
       if (countError) throw new Error("Could not verify administrator access.");
-      if ((admins ?? []).length <= 1) throw new Error("The last administrator cannot be deleted.");
+      assertNotLastAdmin(true, (admins ?? []).length, "deleted");
     }
 
     const { error } = await supabaseAdmin.auth.admin.deleteUser(data.userId);
