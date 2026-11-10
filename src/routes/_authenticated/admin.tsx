@@ -75,6 +75,7 @@ const emptyDraft = {
 type EditState = {
   title: string;
   subtitle: string;
+  category: string;
   excerpt: string;
   body: string;
   cover_image: string;
@@ -230,6 +231,7 @@ function AdminDesk() {
       .update({
         title: edit.title,
         subtitle: edit.subtitle,
+        category: edit.category,
         excerpt: edit.excerpt,
         body: edit.body,
         cover_image: edit.cover_image,
@@ -576,6 +578,7 @@ function AdminDesk() {
                           ? {
                               title: work.title,
                               subtitle: work.subtitle,
+                              category: work.category,
                               excerpt: work.excerpt,
                               body: work.body,
                               cover_image: work.cover_image,
@@ -627,6 +630,24 @@ function AdminDesk() {
                         onChange={(e) => setEdit({ ...edit, subtitle: e.target.value })}
                       />
                     </div>
+                    <div className="space-y-2">
+                      <Label htmlFor={`category-${work.id}`}>Section</Label>
+                      <Select
+                        value={edit.category}
+                        onValueChange={(category) => setEdit({ ...edit, category })}
+                      >
+                        <SelectTrigger id={`category-${work.id}`}>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {[...new Set([...categoryNames, work.category])].map((category) => (
+                            <SelectItem key={category} value={category}>
+                              {category}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                     <CoverImagePicker
                       id={`c-${work.id}`}
                       value={edit.cover_image}
@@ -636,7 +657,7 @@ function AdminDesk() {
                           data: {
                             title: edit.title,
                             subtitle: edit.subtitle,
-                            category: work.category,
+                            category: edit.category,
                             kind: work.kind,
                             excerpt: edit.excerpt,
                             body: edit.body,
