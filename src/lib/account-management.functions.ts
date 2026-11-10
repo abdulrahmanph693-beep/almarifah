@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import type { SupabaseClient } from "@supabase/supabase-js";
+import type { SupabaseClient, User } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { assertNotLastAdmin, assertNotSelf } from "@/lib/account-management.policy";
@@ -17,7 +17,7 @@ export const listManagedAccounts = createServerFn({ method: "GET" })
     await requireAdmin(context.supabase, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const pageSize = 1000;
-    const users = [] as Awaited<ReturnType<typeof supabaseAdmin.auth.admin.listUsers>> extends { data: { users: (infer U)[] } } ? U[] : never;
+    const users: User[] = [];
 
     for (let page = 1; page <= 100; page += 1) {
       const { data, error } = await supabaseAdmin.auth.admin.listUsers({ page, perPage: pageSize });
@@ -70,12 +70,18 @@ export const updateManagedAccount = createServerFn({ method: "POST" })
           .upsert({ user_id: data.userId, role: "admin" }, { onConflict: "user_id,role", ignoreDuplicates: true });
         if (error) throw new Error("Could not grant administrator access.");
       } else {
+        const { data: targetRoles, error: targetRoleError } = await supabaseAdmin
+          .from("user_roles")
+          .select("user_id")
+          .eq("user_id", data.userId)
+          .eq("role", "admin");
+        if (targetRoleError) throw new Error("Could not verify account permissions.");
         const { data: admins, error: countError } = await supabaseAdmin
           .from("user_roles")
           .select("user_id")
           .eq("role", "admin");
         if (countError) throw new Error("Could not verify administrator access.");
-        assertNotLastAdmin(true, (admins ?? []).length, "removed");
+        assertNotLastAdmin(Boolean(targetRoles?.length), (admins ?? []).length, "removed");
         const { error } = await supabaseAdmin
           .from("user_roles")
           .delete()
