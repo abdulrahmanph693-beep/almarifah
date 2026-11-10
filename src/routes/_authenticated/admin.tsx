@@ -287,7 +287,7 @@ function AdminDesk() {
       </p>
 
       <Tabs defaultValue="pending" className="mt-10">
-        <TabsList>
+        <TabsList className="h-auto flex-wrap justify-start">
           <TabsTrigger value="write">Write</TabsTrigger>
           <TabsTrigger value="pending">Pending ({byStatus("pending").length})</TabsTrigger>
           <TabsTrigger value="approved">Approved ({byStatus("approved").length})</TabsTrigger>

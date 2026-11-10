@@ -1,5 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
-import type { SupabaseClient } from "@supabase/supabase-js";
+import type { SupabaseClient, User } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 import { assertNotLastAdmin, assertNotSelf } from "@/lib/account-management.policy";
@@ -11,13 +11,22 @@ async function requireAdmin(supabase: SupabaseClient<Database>, userId: string) 
   if (error || !data) throw new Error("Only an administrator can manage accounts.");
 }
 
+async function countAdmins(supabaseAdmin: SupabaseClient<Database>) {
+  const { count, error } = await supabaseAdmin
+    .from("user_roles")
+    .select("user_id", { count: "exact", head: true })
+    .eq("role", "admin");
+  if (error || count === null) throw new Error("Could not verify administrator access.");
+  return count;
+}
+
 export const listManagedAccounts = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .handler(async ({ context }) => {
     await requireAdmin(context.supabase, context.userId);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const pageSize = 1000;
-    const users = [] as Awaited<ReturnType<typeof supabaseAdmin.auth.admin.listUsers>> extends { data: { users: (infer U)[] } } ? U[] : never;
+    const users: User[] = [];
 
     for (let page = 1; page <= 100; page += 1) {
       const { data, error } = await supabaseAdmin.auth.admin.listUsers({ page, perPage: pageSize });
@@ -56,6 +65,9 @@ export const updateManagedAccount = createServerFn({ method: "POST" })
   .middleware([requireSupabaseAuth])
   .inputValidator((input: { userId: string; action: AccountAction; enabled: boolean }) => input)
   .handler(async ({ data, context }) => {
+    if ((data.action !== "admin" && data.action !== "disabled") || typeof data.enabled !== "boolean") {
+      throw new Error("Choose a valid account action.");
+    }
     if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(data.userId)) {
       throw new Error("Choose a valid account.");
     }
@@ -70,12 +82,13 @@ export const updateManagedAccount = createServerFn({ method: "POST" })
           .upsert({ user_id: data.userId, role: "admin" }, { onConflict: "user_id,role", ignoreDuplicates: true });
         if (error) throw new Error("Could not grant administrator access.");
       } else {
-        const { data: admins, error: countError } = await supabaseAdmin
+        const { data: targetRoles, error: targetRoleError } = await supabaseAdmin
           .from("user_roles")
           .select("user_id")
+          .eq("user_id", data.userId)
           .eq("role", "admin");
-        if (countError) throw new Error("Could not verify administrator access.");
-        assertNotLastAdmin(true, (admins ?? []).length, "removed");
+        if (targetRoleError) throw new Error("Could not verify account permissions.");
+        assertNotLastAdmin(Boolean(targetRoles?.length), await countAdmins(supabaseAdmin), "removed");
         const { error } = await supabaseAdmin
           .from("user_roles")
           .delete()
@@ -92,12 +105,7 @@ export const updateManagedAccount = createServerFn({ method: "POST" })
           .eq("role", "admin");
         if (roleError) throw new Error("Could not verify account permissions.");
         if (targetRoles?.length) {
-          const { data: admins, error: countError } = await supabaseAdmin
-            .from("user_roles")
-            .select("user_id")
-            .eq("role", "admin");
-          if (countError) throw new Error("Could not verify administrator access.");
-          assertNotLastAdmin(true, (admins ?? []).length, "disabled");
+          assertNotLastAdmin(true, await countAdmins(supabaseAdmin), "disabled");
         }
       }
 
@@ -128,12 +136,7 @@ export const deleteManagedAccount = createServerFn({ method: "POST" })
       .eq("role", "admin");
     if (roleError) throw new Error("Could not verify account permissions.");
     if (targetRoles?.length) {
-      const { data: admins, error: countError } = await supabaseAdmin
-        .from("user_roles")
-        .select("user_id")
-        .eq("role", "admin");
-      if (countError) throw new Error("Could not verify administrator access.");
-      assertNotLastAdmin(true, (admins ?? []).length, "deleted");
+      assertNotLastAdmin(true, await countAdmins(supabaseAdmin), "deleted");
     }
 
     const { error } = await supabaseAdmin.auth.admin.deleteUser(data.userId);
