@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { authors } from "@/lib/content";
 
 export const Route = createFileRoute("/about")({
   head: () => ({
@@ -8,12 +7,13 @@ export const Route = createFileRoute("/about")({
       {
         name: "description",
         content:
-          "Almuasir is the English edition of Ainul-Haqq: an editorial home for essays, poetry and criticism written for unhurried readers.",
+          "Almuasir is an independent intellectual and literary platform promoting authentic knowledge, meaningful thought, and scholarly engagement.",
       },
       { property: "og:title", content: "About Us — Almuasir" },
       {
         property: "og:description",
-        content: "The editorial mission behind Almuasir, the English edition of Ainul-Haqq.",
+        content:
+          "An English-language intellectual and literary platform for knowledge, research, thoughtful dialogue, and scholarly contributions.",
       },
       { property: "og:url", content: "/about" },
     ],
@@ -27,61 +27,62 @@ function AboutPage() {
     <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6">
       <span className="eyebrow">About</span>
       <h1 className="mt-3 font-serif text-4xl sm:text-5xl">
-        Almuasir
+        About Almuasir
       </h1>
 
       <div className="prose-reading mt-10">
         <p className="dropcap">
-          Almuasir is the English edition of Ainul-Haqq. It exists for a kind of reading that is
-          becoming rare: unhurried, argumentative, willing to sit with a paragraph until it gives
-          something up.
+          Almuasir is an independent intellectual and literary platform committed to promoting
+          authentic knowledge, meaningful thought, and scholarly engagement. It seeks to bring
+          together readers, researchers, writers, academics, and thinkers through a diverse
+          collection of articles, essays, academic studies, and literary contributions. We believe
+          that knowledge enlightens minds, thought shapes perspectives, and literature gives
+          expression to human experience.
         </p>
         <p>
-          We publish essays and long-form analysis, poetry and translation, and studies in Seerah
-          and Tawheed. Our subjects are philosophy, literature, culture, history and language —
-          but the through-line is method rather than topic. We would rather publish one careful piece
-          than five quick ones.
+          Our areas of interest encompass a wide range of academic and intellectual disciplines,
+          including Seerah and Islamic Studies, philosophy, history and civilisation, politics and
+          social sciences, Islamic finance and economics, literature, and language. From the study
+          of the Qur'an, Hadith, Fiqh, and Islamic intellectual heritage to contemporary
+          philosophical, social, political, and economic questions, we seek to explore ideas that
+          contribute to a deeper understanding of the world.
+        </p>
+        <p>
+          In an age characterised by the rapid circulation of information, we believe that the
+          pursuit of knowledge must be grounded in authenticity, research, intellectual honesty,
+          and critical inquiry. Our purpose extends beyond the mere dissemination of information;
+          we aspire to encourage thoughtful engagement, constructive dialogue, and the examination
+          of diverse perspectives through reliable sources, reasoned arguments, and responsible
+          scholarship. We value intellectual openness, scholarly accuracy, literary excellence, and
+          clarity of expression.
+        </p>
+        <p>
+          Almuasir welcomes contributions from scholars, researchers, academics, students, writers,
+          and independent thinkers committed to sharing valuable knowledge and original
+          perspectives. Whether through academic research, critical essays, historical explorations,
+          literary compositions, translations, or examinations of contemporary issues, we seek to
+          provide a platform for meaningful intellectual exchange and the development of a vibrant
+          culture of reading, writing, and research.
+        </p>
+        <p>
+          Almuasir is the English-language sister publication of Ainul-Haqq, our Arabic literary
+          and intellectual platform. While both publications share a common commitment to knowledge
+          and intellectual development, Almuasir seeks to engage a wider English-speaking readership
+          and provide opportunities for scholarly and independent contributions in English.
+          Together, they reflect our aspiration to make meaningful knowledge accessible across
+          languages and intellectual communities.
+        </p>
+        <p>
+          Our vision is to become a credible and intellectually vibrant platform that contributes
+          to the advancement of knowledge, the enrichment of literary culture, and the cultivation
+          of thoughtful, informed, and critically engaged readers across the world. We believe that
+          knowledge should not merely be accumulated, but examined, understood, and communicated
+          with clarity, depth, and responsibility.
         </p>
         <blockquote>
-          Certainty is usually a symptom of having stopped too early.
+          Almuasir – Where Knowledge Meets Thought, and Thought Finds Expression.
         </blockquote>
-        <h2>What we look for</h2>
-        <ul>
-          <li>Arguments that survive their own strongest objection.</li>
-          <li>Prose that earns its length.</li>
-          <li>Poetry that trusts silence as much as sound.</li>
-          <li>Criticism written by someone who loves the form they are examining.</li>
-        </ul>
-        <h2>Our relationship to Ainul-Haqq</h2>
-        <p>
-          Ainul-Haqq is our Arabic parent publication. Almuasir is not a mirror of it: some pieces
-          are translated in both directions, others are written for this edition alone. The two share
-          an editorial conscience rather than a table of contents.
-        </p>
       </div>
-
-      <section aria-labelledby="team-heading" className="mt-16">
-        <div className="rule-accent mb-8">
-          <h2 id="team-heading" className="font-serif text-2xl">
-            The Editors
-          </h2>
-        </div>
-        <ul className="grid gap-6 sm:grid-cols-2">
-          {authors.map((a) => (
-            <li key={a.slug} className="rounded-md border border-border bg-card p-5">
-              <span
-                aria-hidden
-                className="flex h-11 w-11 items-center justify-center rounded-full bg-accent/15 font-serif text-accent"
-              >
-                {a.initials}
-              </span>
-              <h3 className="mt-3 font-serif text-lg">{a.name}</h3>
-              <p className="text-xs uppercase tracking-[0.14em] text-muted-foreground">{a.role}</p>
-              <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{a.bio}</p>
-            </li>
-          ))}
-        </ul>
-      </section>
     </div>
   );
 }
