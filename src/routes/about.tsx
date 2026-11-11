@@ -15,6 +15,8 @@ export const Route = createFileRoute("/about")({
         content:
           "An English-language intellectual and literary platform for knowledge, research, thoughtful dialogue, and scholarly contributions.",
       },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
       { property: "og:url", content: "/about" },
     ],
     links: [{ rel: "canonical", href: "/about" }],
