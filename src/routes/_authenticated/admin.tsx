@@ -406,6 +406,11 @@ function AdminDesk() {
                           </AlertDialogFooter>
                         </AlertDialogContent>
                       </AlertDialog>
+                      {isSelf && (
+                        <p className="basis-full text-right text-xs text-muted-foreground">
+                          Your account is protected from changes here.
+                        </p>
+                      )}
                     </div>
                   </article>
                 );
