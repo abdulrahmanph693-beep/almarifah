@@ -1,0 +1,3 @@
+- [ ] Add an admin-managed editorial directory with portrait uploads.
+- [ ] Show active editors and their sections on About Us.
+- [ ] Verify admin management, public display, and project checks.
