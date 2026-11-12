@@ -41,6 +41,45 @@ export type Database = {
         }
         Relationships: []
       }
+      editorial_members: {
+        Row: {
+          active: boolean
+          bio: string
+          created_at: string
+          full_name: string
+          id: string
+          photo_data: string
+          position: number
+          role_title: string
+          section: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          bio?: string
+          created_at?: string
+          full_name: string
+          id?: string
+          photo_data?: string
+          position?: number
+          role_title?: string
+          section?: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          bio?: string
+          created_at?: string
+          full_name?: string
+          id?: string
+          photo_data?: string
+          position?: number
+          role_title?: string
+          section?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           bio: string
